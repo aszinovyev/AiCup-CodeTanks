@@ -1,8 +1,11 @@
 #include <iostream>
 #include "MyStrategy.h"
 
-#include <cmath>
+#include <math.h>
 #include <cstdlib>
+
+#define M_PI 3.14159265358979323846
+#define _USE_MATH_DEFINES
 
 using namespace model;
 using namespace std;
@@ -13,16 +16,16 @@ void MyStrategy::gotoXY(double x, double y) {
     const double k = 1;
 
     double angle = _self.getAngleTo(x, y);
-    _move->setTurn(_self.getAngleTo(x, y));
+    _move.setTurn(_self.getAngleTo(x, y));
 
     angle = fabs(angle);
-    _move->setSpeedUp( pow((M_PI - angle) / M_PI, k) );
+    _move.setSpeedUp( pow((M_PI - angle) / M_PI, k) );
 }
 
 void MyStrategy::act() {
     if (_self.getTeammateIndex() == 1) {
         gotoXY(0, 0);
-        _move->setAction(TAKE_PUCK);
+        _move.setAction(TAKE_PUCK);
         return;
     }
 
@@ -35,20 +38,20 @@ void MyStrategy::act() {
         gotoXY(netX, netY);
 
         if (fabs(_self.getAngleTo(netX, netY)) < M_PI / 180) {
-            _move->setAction(STRIKE);
+            _move.setAction(STRIKE);
         }
     } else {
-        _move->setSpeedUp(1);
-        _move->setTurn(_self.getAngleTo(_world.getPuck()));
-        _move->setAction(TAKE_PUCK);
+        _move.setSpeedUp(1);
+        _move.setTurn(_self.getAngleTo(_world.getPuck()));
+        _move.setAction(TAKE_PUCK);
     }
 }
 
 void MyStrategy::move(const Hockeyist& self, const World& world, const Game& game, Move& move) {
-    _self = self;
-    _world = world;
-    _game = game;
-    _move = &move;
+    _self = HockeyistF(self);
+    _world = WorldF(world);
+    _game = GameF(game);
+    _move = MoveF(&move);
 
     act();
 }

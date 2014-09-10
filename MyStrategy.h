@@ -5,6 +5,8 @@
 
 #include "Strategy.h"
 
+#include "coordfix.h"
+
 class MyStrategy : public Strategy {
 public:
     MyStrategy();
@@ -16,10 +18,10 @@ public:
     void move(const model::Hockeyist& self, const model::World& world, const model::Game& game, model::Move& move);
 
 private:
-    model::Hockeyist _self;
-    model::World _world;
-    model::Game _game;
-    model::Move* _move;
+    HockeyistF _self;
+    WorldF _world;
+    GameF _game;
+    MoveF _move;
 };
 
 #endif
