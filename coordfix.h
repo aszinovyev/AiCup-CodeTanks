@@ -3,6 +3,25 @@
 
 #include "Strategy.h"
 
+class CoordFix {
+public:
+    CoordFix();
+    CoordFix(double width, double height, bool isOnLeft);
+
+    double invX(double x);
+    double invY(double y);
+    double invAngle(double angle);
+
+    double fixX(double x);
+    double fixY(double y);
+    double fixAngle(double angle);
+
+private:
+    double _w;
+    double _h;
+    bool _isOnLeft;
+};
+
 class HockeyistF : public model::Hockeyist {
 public:
     HockeyistF();

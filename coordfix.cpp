@@ -1,4 +1,54 @@
+#include <math.h>
+
 #include "coordfix.h"
+#include "geom.h"
+
+CoordFix::CoordFix() {
+}
+
+CoordFix::CoordFix(double width, double height, bool isOnLeft) {
+    _w = width;
+    _h = height;
+    _isOnLeft = isOnLeft;
+}
+
+double CoordFix::invX(double x) {
+    return _w - x;
+}
+
+double CoordFix::invY(double y) {
+    return _h - y;
+}
+
+double CoordFix::invAngle(double angle) {
+    return NormAngle(angle + M_PI);
+}
+
+double CoordFix::fixX(double x) {
+    if (_isOnLeft) {
+        return x;
+    } else {
+        return invX(x);
+    }
+}
+
+double CoordFix::fixY(double y) {
+    if (_isOnLeft) {
+        return y;
+    } else {
+        return invY(y);
+    }
+}
+
+double CoordFix::fixAngle(double angle) {
+    if (_isOnLeft) {
+        return angle;
+    } else {
+        return invAngle(angle);
+    }
+}
+
+//
 
 HockeyistF::HockeyistF() {
 }
