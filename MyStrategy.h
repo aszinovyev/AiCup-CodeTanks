@@ -18,9 +18,12 @@ public:
     void move(const model::Hockeyist& self, const model::World& world, const model::Game& game, model::Move& move);
 
 private:
+    bool _first;
+    CoordFix _fix;
+
     HockeyistF _self;
     WorldF _world;
-    GameF _game;
+    Game _game;
     MoveF _move;
 };
 

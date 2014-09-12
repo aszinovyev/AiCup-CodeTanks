@@ -7,10 +7,11 @@
 #define M_PI 3.14159265358979323846
 #define _USE_MATH_DEFINES
 
-using namespace model;
 using namespace std;
 
-MyStrategy::MyStrategy() { }
+MyStrategy::MyStrategy() {
+    _first = true;
+}
 
 void MyStrategy::gotoXY(double x, double y) {
     const double k = 1;
@@ -30,7 +31,7 @@ void MyStrategy::act() {
     }
 
     if (_world.getPuck().getOwnerHockeyistId() == _self.getId()) {
-        Player opp = _world.getOpponentPlayer();
+        PlayerF opp = _world.getOpponentPlayer();
 
         double netX = opp.getNetFront();
         double netY = (opp.getNetBottom() + opp.getNetTop()) / 2;
@@ -48,10 +49,16 @@ void MyStrategy::act() {
 }
 
 void MyStrategy::move(const Hockeyist& self, const World& world, const Game& game, Move& move) {
-    _self = HockeyistF(self);
-    _world = WorldF(world);
-    _game = GameF(game);
-    _move = MoveF(&move);
+    if (_first) {
+        _first = false;
+
+        _fix = CoordFix(world.getWidth(), world.getHeight(), world.getMyPlayer().getNetBack() < world.getWidth() / 2);
+    }
+
+    _self = HockeyistF(self, _fix);
+    _world = WorldF(world, _fix);
+    _game = game;
+    _move = MoveF(&move, _fix);
 
     act();
 }
