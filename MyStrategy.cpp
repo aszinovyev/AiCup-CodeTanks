@@ -4,8 +4,8 @@
 #include <math.h>
 #include <cstdlib>
 
-#define M_PI 3.14159265358979323846
-#define _USE_MATH_DEFINES
+//#define M_PI 3.14159265358979323846
+//#define _USE_MATH_DEFINES
 
 using namespace std;
 
@@ -17,7 +17,7 @@ void MyStrategy::gotoXY(double x, double y) {
     const double k = 1;
 
     double angle = _self.getAngleTo(x, y);
-    _move.setTurn(_self.getAngleTo(x, y));
+    _move.setTurn(angle);
 
     angle = fabs(angle);
     _move.setSpeedUp( pow((M_PI - angle) / M_PI, k) );
@@ -49,15 +49,17 @@ void MyStrategy::act() {
 }
 
 void MyStrategy::move(const Hockeyist& self, const World& world, const Game& game, Move& move) {
+    _game = GameF(game);
+
     if (_first) {
         _first = false;
 
-        _fix = CoordFix(world.getWidth(), world.getHeight(), world.getMyPlayer().getNetBack() < world.getWidth() / 2);
+        _fix = CoordFix(_game.getWorldWidth(), _game.getWorldHeight(),
+                        world.getMyPlayer().getNetBack() < _game.getWorldWidth() / 2);
     }
 
     _self = HockeyistF(self, _fix);
-    _world = WorldF(world, _fix);
-    _game = game;
+    _world = WorldF(world, _fix, _game);
     _move = MoveF(&move, _fix);
 
     act();

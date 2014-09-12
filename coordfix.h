@@ -56,6 +56,17 @@ private:
 
 //
 
+class GameF : public Game {
+public:
+    GameF();
+    GameF(const Game& g);
+
+    double getWorldWidth() const;
+    double getWorldHeight() const;
+};
+
+//
+
 class PlayerF : public Player {
 public:
     PlayerF(const Player& p, const CoordFix& fix);
@@ -80,8 +91,11 @@ public:
     double getSpeedX() const;
     double getSpeedY() const;
     double getAngle() const;
+
     double getAngleTo(double x, double y) const;
+    double getAngleTo(const Unit& unit) const;
     double getDistanceTo(double x, double y) const;
+    double getDistanceTo(const Unit& unit) const;
 
 private:
     CoordFix _fix;
@@ -99,8 +113,11 @@ public:
     double getSpeedX() const;
     double getSpeedY() const;
     double getAngle() const;
+
     double getAngleTo(double x, double y) const;
+    double getAngleTo(const Unit& unit) const;
     double getDistanceTo(double x, double y) const;
+    double getDistanceTo(const Unit& unit) const;
 
 private:
     CoordFix _fix;
@@ -117,8 +134,11 @@ public:
     double getSpeedX() const;
     double getSpeedY() const;
     double getAngle() const;
+
     double getAngleTo(double x, double y) const;
+    double getAngleTo(const Unit& unit) const;
     double getDistanceTo(double x, double y) const;
+    double getDistanceTo(const Unit& unit) const;
 
 private:
     CoordFix _fix;
@@ -129,16 +149,20 @@ private:
 class WorldF : public World {
 public:
     WorldF();
-    WorldF(const World& w, const CoordFix& fix);
+    WorldF(const World& w, const CoordFix& fix, const GameF& game);
 
     const vector<PlayerF> getPlayers() const;
     PlayerF getMyPlayer() const;
     PlayerF getOpponentPlayer() const;
 
-    const PuckF getPuck() const;
+    PuckF getPuck() const;
+
+    double getWidth() const;
+    double getHeight() const;
 
 private:
     CoordFix _fix;
+    GameF _game;
 };
 
 #endif // COORDFIX_H

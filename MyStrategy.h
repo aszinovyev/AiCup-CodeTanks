@@ -23,7 +23,7 @@ private:
 
     HockeyistF _self;
     WorldF _world;
-    Game _game;
+    GameF _game;
     MoveF _move;
 };
 
