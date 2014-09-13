@@ -6,6 +6,7 @@
 #include "Strategy.h"
 
 #include "coordfix.h"
+#include "geom.h"
 
 class MyStrategy : public Strategy {
 public:
@@ -13,7 +14,9 @@ public:
     void move(const model::Hockeyist& self, const model::World& world, const model::Game& game, model::Move& move);
 
 private:    
-    const double AttackAreaX0 = 600;
+    const double StrikePrecision = M_PI / 180;
+
+    const double AttackAreaX0 = 550;
     const double AttackAreaX1 = 768;
     const double AttackAreaY0 = 170;
     const double AttackAreaY1 = 346;

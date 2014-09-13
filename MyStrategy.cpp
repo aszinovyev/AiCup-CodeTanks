@@ -2,7 +2,6 @@
 #include <math.h>
 
 #include "MyStrategy.h"
-#include "geom.h"
 
 using namespace std;
 
@@ -104,7 +103,10 @@ void MyStrategy::act() {
         if (isInAttackArea(_self)) {
             gotoXY(_attackDestX, _attackDestY1);
 
-            if (fabs(_self.getAngleTo(_attackDestX, _attackDestY1)) < M_PI / 360) {
+            double angle = _self.getAngleTo(_attackDestX, _attackDestY1);
+            _move.setTurn(angle - StrikePrecision / 2);
+
+            if ((angle > 0) && (angle < StrikePrecision)) {
                 _move.setAction(STRIKE);
             }
         } else {
