@@ -13,3 +13,11 @@ double NormAngle(double a) {
 
     return a;
 }
+
+double Pif(double a, double b) {
+    return sqrt(a*a + b*b);
+}
+
+double ctg(double a) {
+    return 1 / tan(a);
+}

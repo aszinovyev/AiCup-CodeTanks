@@ -10,11 +10,6 @@
 class MyStrategy : public Strategy {
 public:
     MyStrategy();
-
-    void gotoXY(double x, double y);
-
-    void act();
-
     void move(const model::Hockeyist& self, const model::World& world, const model::Game& game, model::Move& move);
 
 private:
@@ -25,6 +20,12 @@ private:
     WorldF _world;
     GameF _game;
     MoveF _move;
+
+    double conv0(double x, double z);
+    double conv1(double x, double z);
+    void gotoXY(double x, double y);
+
+    void act();
 };
 
 #endif

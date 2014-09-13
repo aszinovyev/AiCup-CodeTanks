@@ -5,5 +5,8 @@
 //#define _USE_MATH_DEFINES
 
 double NormAngle(double a);
+double Pif(double a, double b);
+
+double ctg(double a);
 
 #endif // GEOM_H

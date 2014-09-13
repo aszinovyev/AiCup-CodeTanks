@@ -10,14 +10,41 @@ MyStrategy::MyStrategy() {
     _first = true;
 }
 
+double MyStrategy::conv0(double x, double z) {
+    return (x * M_PI / z / 2);
+}
+
+double MyStrategy::conv1(double x, double z) {
+    return M_PI / 2 * (x + M_PI - 2 * z) / (M_PI - z);
+}
+
 void MyStrategy::gotoXY(double x, double y) {
-    const double k = 1;
+    const double z = M_PI * 2 / 3;
+    const double m = 6;
+    const double n = -4;
+    const double alpha = M_PI / 18;
+    const double beta = M_PI - alpha;
 
     double angle = _self.getAngleTo(x, y);
     _move.setTurn(angle);
 
     angle = fabs(angle);
-    _move.setSpeedUp( pow((M_PI - angle) / M_PI, k) );
+
+    double realspeed = Pif(_self.getSpeedX(), _self.getSpeedY());
+    _move.setSpeedUp(0);
+
+    if (angle <= z) {
+        double maxspeed = ctg(conv0(angle, z)) * m / ctg(conv0(alpha, z));
+        if (maxspeed > realspeed ) {
+            _move.setSpeedUp(1);
+        }
+    } else {
+        double minspeed = ctg(conv1(angle, z)) * n / ctg(conv1(beta, z));
+        if (minspeed < n) {
+            cout << "h1" << endl;
+            _move.setSpeedUp(-1);
+        }
+    }
 }
 
 void MyStrategy::act() {
