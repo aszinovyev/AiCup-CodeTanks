@@ -12,7 +12,19 @@ public:
     MyStrategy();
     void move(const model::Hockeyist& self, const model::World& world, const model::Game& game, model::Move& move);
 
-private:
+private:    
+    const double AttackAreaX0 = 600;
+    const double AttackAreaX1 = 768;
+    const double AttackAreaY0 = 170;
+    const double AttackAreaY1 = 346;
+
+    double _attackAreaDestX;
+    double _attackAreaDestY;
+
+    double _attackDestX;
+    double _attackDestY0;
+    double _attackDestY1;
+
     bool _first;
     CoordFix _fix;
 
@@ -24,6 +36,10 @@ private:
     double conv0(double x, double z);
     double conv1(double x, double z);
     void gotoXY(double x, double y);
+    void gotoXY(const UnitF& u);
+
+    bool isInAttackArea(double x, double y);
+    bool isInAttackArea(const UnitF& u);
 
     void act();
 };

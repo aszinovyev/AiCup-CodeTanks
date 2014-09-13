@@ -228,87 +228,119 @@ double UnitF::getDistanceTo(const Unit& unit) const {
 
 //
 
-HockeyistF::HockeyistF() {
+HockeyistF::HockeyistF() : UnitF(Hockeyist(), 0) {
 }
 
-HockeyistF::HockeyistF(const Hockeyist& h, const CoordFix* fix) : Hockeyist(h), _fix(fix) {
+HockeyistF::HockeyistF(const Hockeyist& h, const CoordFix* fix) : Hockeyist(h), UnitF(h, fix), _fix(fix) {
+}
+
+long long HockeyistF::getId() const {
+    return UnitF::getId();
+}
+
+double HockeyistF::getMass() const {
+    return UnitF::getMass();
+}
+
+double HockeyistF::getRadius() const {
+    return UnitF::getRadius();
 }
 
 double HockeyistF::getX() const {
-    return _fix->fixX(Hockeyist::getX());
+    return UnitF::getX();
 }
 
 double HockeyistF::getY() const {
-    return _fix->fixY(Hockeyist::getY());
+    return UnitF::getY();
 }
 
 double HockeyistF::getSpeedX() const {
-    return _fix->fixDx(Hockeyist::getSpeedX());
+    return UnitF::getSpeedX();
 }
 
 double HockeyistF::getSpeedY() const {
-    return _fix->fixDy(Hockeyist::getSpeedY());
+    return UnitF::getSpeedY();
 }
 
 double HockeyistF::getAngle() const {
-    return _fix->fixAngle(Hockeyist::getAngle());
+    return UnitF::getAngle();
+}
+
+double HockeyistF::getAngularSpeed() const {
+    return UnitF::getAngularSpeed();
 }
 
 double HockeyistF::getAngleTo(double x, double y) const {
-    return Hockeyist::getAngleTo(_fix->fixX(x), _fix->fixY(y));
+    return UnitF::getAngleTo(x, y);
 }
 
 double HockeyistF::getAngleTo(const Unit& unit) const {
-    return Hockeyist::getAngleTo(unit);
+    return UnitF::getAngleTo(unit);
 }
 
 double HockeyistF::getDistanceTo(double x, double y) const {
-    return Hockeyist::getDistanceTo(_fix->fixX(x), _fix->fixY(y));
+    return UnitF::getDistanceTo(x, y);
 }
 
 double HockeyistF::getDistanceTo(const Unit& unit) const {
-    return Hockeyist::getDistanceTo(unit);
+    return UnitF::getDistanceTo(unit);
 }
 
 //
 
-PuckF::PuckF(const Puck& p, const CoordFix* fix) : Puck(p), _fix(fix) {
+PuckF::PuckF(const Puck& p, const CoordFix* fix) : Puck(p), UnitF(p, fix) {
+}
+
+long long PuckF::getId() const {
+    return UnitF::getId();
+}
+
+double PuckF::getMass() const {
+    return UnitF::getMass();
+}
+
+double PuckF::getRadius() const {
+    return UnitF::getRadius();
 }
 
 double PuckF::getX() const {
-    return _fix->fixX(Puck::getX());
+    return UnitF::getX();
 }
 
 double PuckF::getY() const {
-    return _fix->fixY(Puck::getY());
+    return UnitF::getY();
 }
 
 double PuckF::getSpeedX() const {
-    return _fix->fixDx(Puck::getSpeedX());
+    return UnitF::getSpeedX();
 }
 
 double PuckF::getSpeedY() const {
-    return _fix->fixDy(Puck::getSpeedY());
+    return UnitF::getSpeedY();
 }
 
 double PuckF::getAngle() const {
-    return _fix->fixAngle(Puck::getAngle());
+    return UnitF::getAngle();
+}
+
+double PuckF::getAngularSpeed() const {
+    return UnitF::getAngularSpeed();
 }
 
 double PuckF::getAngleTo(double x, double y) const {
-    return Puck::getAngleTo(_fix->fixX(x), _fix->fixY(y));
+    return UnitF::getAngleTo(x, y);
 }
 
 double PuckF::getAngleTo(const Unit& unit) const {
-    return Puck::getAngleTo(unit);
+    return UnitF::getAngleTo(unit);
 }
 
 double PuckF::getDistanceTo(double x, double y) const {
-    return Puck::getDistanceTo(_fix->fixX(x), _fix->fixY(y));
+    return UnitF::getDistanceTo(x, y);
 }
 
 double PuckF::getDistanceTo(const Unit& unit) const {
-    return Puck::getDistanceTo(unit);
+    return UnitF::getDistanceTo(unit);
 }
 
 //

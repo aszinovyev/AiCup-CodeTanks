@@ -14,8 +14,6 @@ void MyStrategy::move(const Hockeyist& self, const World& world, const Game& gam
     _game = GameF(game);
 
     if (_first) {
-        _first = false;
-
         _fix = CoordFix(_game.getWorldWidth(), _game.getWorldHeight(),
                         world.getMyPlayer().getNetBack() < _game.getWorldWidth() / 2);
     }
@@ -25,6 +23,17 @@ void MyStrategy::move(const Hockeyist& self, const World& world, const Game& gam
     _self = HockeyistF(self, &_fix);
     _world = WorldF(world, &_fix, _game);
     _move = MoveF(&move, &_fix);
+
+    if (_first) {
+        _first = false;
+
+        _attackAreaDestX = AttackAreaX0 + self.getRadius();
+        _attackAreaDestY = AttackAreaY0 + _game.getPuckBindingRange() + _world.getPuck().getRadius();
+
+        _attackDestX = _world.getOpponentPlayer().getNetFront();
+        _attackDestY0 = _world.getOpponentPlayer().getNetTop() + _world.getPuck().getRadius();
+        _attackDestY1 = _fix.invcY(_attackDestY0);
+    }
 
     act();
 }
@@ -67,29 +76,42 @@ void MyStrategy::gotoXY(double x, double y) {
     }
 }
 
+void MyStrategy::gotoXY(const UnitF& u) {
+    gotoXY(u.getX(), u.getY());
+}
+
+//
+
+bool MyStrategy::isInAttackArea(double x, double y) {
+    return (x > AttackAreaX0 && x < AttackAreaX1 && y > AttackAreaY0 && y < AttackAreaY1);
+}
+
+bool MyStrategy::isInAttackArea(const UnitF& u) {
+    return isInAttackArea(u.getX(), u.getY());
+}
+
 //
 
 void MyStrategy::act() {
     if (_self.getTeammateIndex() == 1) {
         gotoXY(0, 0);
-        _move.setAction(TAKE_PUCK);
         return;
     }
 
+    _fix.setInvY(_self.getY() > _game.getWorldHeight() / 2);
+
     if (_world.getPuck().getOwnerHockeyistId() == _self.getId()) {
-        PlayerF opp = _world.getOpponentPlayer();
+        if (isInAttackArea(_self)) {
+            gotoXY(_attackDestX, _attackDestY1);
 
-        double netX = opp.getNetFront();
-        double netY = (opp.getNetBottom() + opp.getNetTop()) / 2;
-
-        gotoXY(netX, netY);
-
-        if (fabs(_self.getAngleTo(netX, netY)) < M_PI / 180) {
-            _move.setAction(STRIKE);
+            if (fabs(_self.getAngleTo(_attackDestX, _attackDestY1)) < M_PI / 360) {
+                _move.setAction(STRIKE);
+            }
+        } else {
+            gotoXY(_attackAreaDestX, _attackAreaDestY);
         }
     } else {
-        _move.setSpeedUp(1);
-        _move.setTurn(_self.getAngleTo(_world.getPuck()));
+        gotoXY(_world.getPuck());
         _move.setAction(TAKE_PUCK);
     }
 }

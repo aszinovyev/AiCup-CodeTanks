@@ -14,6 +14,8 @@ public:
     void setInvY(bool invcY);
     bool isInvY() const;
 
+    double invcY(double y) const;
+
     double fixX(double x) const;
     double fixY(double y) const;
     double fixAngle(double angle) const;
@@ -27,7 +29,6 @@ private:
     bool _invY;
 
     double invcX(double x) const;
-    double invcY(double y) const;
     double invcAngle(double angle) const;
     double invcDx(double dx) const;
     double invcDy(double dy) const;
@@ -109,16 +110,20 @@ private:
 
 //
 
-class HockeyistF : public Hockeyist {
+class HockeyistF : public Hockeyist, public UnitF {
 public:
     HockeyistF();
     HockeyistF(const Hockeyist& h, const CoordFix* fix);
 
+    long long getId() const;
+    double getMass() const;
+    double getRadius() const;
     double getX() const;
     double getY() const;
     double getSpeedX() const;
     double getSpeedY() const;
     double getAngle() const;
+    double getAngularSpeed() const;
 
     double getAngleTo(double x, double y) const;
     double getAngleTo(const Unit& unit) const;
@@ -131,23 +136,24 @@ private:
 
 //
 
-class PuckF : public Puck {
+class PuckF : public Puck, public UnitF {
 public:
     PuckF(const Puck& p, const CoordFix* fix);
 
+    long long getId() const;
+    double getMass() const;
+    double getRadius() const;
     double getX() const;
     double getY() const;
     double getSpeedX() const;
     double getSpeedY() const;
     double getAngle() const;
+    double getAngularSpeed() const;
 
     double getAngleTo(double x, double y) const;
     double getAngleTo(const Unit& unit) const;
     double getDistanceTo(double x, double y) const;
     double getDistanceTo(const Unit& unit) const;
-
-private:
-    const CoordFix* _fix;
 };
 
 //
