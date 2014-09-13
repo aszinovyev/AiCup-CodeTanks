@@ -11,11 +11,8 @@ public:
     CoordFix();
     CoordFix(double width, double height, bool isOnLeft);
 
-    double invX(double x) const;
-    double invY(double y) const;
-    double invAngle(double angle) const;
-    double invDx(double dx) const;
-    double invDy(double dy) const;
+    void setInvY(bool invcY);
+    bool isInvY() const;
 
     double fixX(double x) const;
     double fixY(double y) const;
@@ -27,6 +24,15 @@ private:
     double _w;
     double _h;
     bool _isOnLeft;
+    bool _invY;
+
+    double invcX(double x) const;
+    double invcY(double y) const;
+    double invcAngle(double angle) const;
+    double invcDx(double dx) const;
+    double invcDy(double dy) const;
+
+    double invyAngle(double angle) const;
 };
 
 //
@@ -34,7 +40,7 @@ private:
 class MoveF {
 public:
     MoveF();
-    MoveF(Move* m, const CoordFix& fix);
+    MoveF(Move* m, const CoordFix* fix);
 
     double getSpeedUp() const;
     void setSpeedUp(const double speedUp);
@@ -51,7 +57,7 @@ public:
 
 private:
     Move* _move;
-    CoordFix _fix;
+    const CoordFix* _fix;
 };
 
 //
@@ -69,7 +75,7 @@ public:
 
 class PlayerF : public Player {
 public:
-    PlayerF(const Player& p, const CoordFix& fix);
+    PlayerF(const Player& p, const CoordFix* fix);
 
     double getNetLeft() const;
     double getNetRight() const;
@@ -77,14 +83,14 @@ public:
     double getNetBack() const;
 
 private:
-    CoordFix _fix;
+    const CoordFix* _fix;
 };
 
 //
 
 class UnitF : public Unit {
 public:
-    UnitF(const Unit& u, const CoordFix& fix);
+    UnitF(const Unit& u, const CoordFix* fix);
 
     double getX() const;
     double getY() const;
@@ -98,7 +104,7 @@ public:
     double getDistanceTo(const Unit& unit) const;
 
 private:
-    CoordFix _fix;
+    const CoordFix* _fix;
 };
 
 //
@@ -106,7 +112,7 @@ private:
 class HockeyistF : public Hockeyist {
 public:
     HockeyistF();
-    HockeyistF(const Hockeyist& h, const CoordFix& fix);
+    HockeyistF(const Hockeyist& h, const CoordFix* fix);
 
     double getX() const;
     double getY() const;
@@ -120,14 +126,14 @@ public:
     double getDistanceTo(const Unit& unit) const;
 
 private:
-    CoordFix _fix;
+    const CoordFix* _fix;
 };
 
 //
 
 class PuckF : public Puck {
 public:
-    PuckF(const Puck& p, const CoordFix& fix);
+    PuckF(const Puck& p, const CoordFix* fix);
 
     double getX() const;
     double getY() const;
@@ -141,7 +147,7 @@ public:
     double getDistanceTo(const Unit& unit) const;
 
 private:
-    CoordFix _fix;
+    const CoordFix* _fix;
 };
 
 //
@@ -149,7 +155,7 @@ private:
 class WorldF : public World {
 public:
     WorldF();
-    WorldF(const World& w, const CoordFix& fix, const GameF& game);
+    WorldF(const World& w, const CoordFix* fix, const GameF& game);
 
     const vector<PlayerF> getPlayers() const;
     PlayerF getMyPlayer() const;
@@ -161,7 +167,7 @@ public:
     double getHeight() const;
 
 private:
-    CoordFix _fix;
+    const CoordFix* _fix;
     GameF _game;
 };
 

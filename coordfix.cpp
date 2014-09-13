@@ -11,65 +11,82 @@ CoordFix::CoordFix(double width, double height, bool isOnLeft) {
     _w = width;
     _h = height;
     _isOnLeft = isOnLeft;
+    _invY = false;
 }
 
-double CoordFix::invX(double x) const {
+void CoordFix::setInvY(bool invY) {
+    _invY = invY;
+}
+
+bool CoordFix::isInvY() const {
+    return _invY;
+}
+
+double CoordFix::invcX(double x) const {
     return _w - x;
 }
 
-double CoordFix::invY(double y) const {
+double CoordFix::invcY(double y) const {
     return _h - y;
 }
 
-double CoordFix::invAngle(double angle) const {
+double CoordFix::invcAngle(double angle) const {
     return NormAngle(angle + M_PI);
 }
 
-double CoordFix::invDx(double dx) const {
+double CoordFix::invcDx(double dx) const {
     return -dx;
 }
 
-double CoordFix::invDy(double dy) const {
+double CoordFix::invcDy(double dy) const {
     return -dy;
+}
+
+double CoordFix::invyAngle(double angle) const {
+    return -angle;
 }
 
 double CoordFix::fixX(double x) const {
     if (_isOnLeft) {
         return x;
     } else {
-        return invX(x);
+        return invcX(x);
     }
 }
 
 double CoordFix::fixY(double y) const {
-    if (_isOnLeft) {
+    if (_isOnLeft != _invY) {
         return y;
     } else {
-        return invY(y);
+        return invcY(y);
     }
 }
 
 double CoordFix::fixAngle(double angle) const {
-    if (_isOnLeft) {
-        return angle;
-    } else {
-        return invAngle(angle);
+    if (!_isOnLeft) {
+        angle = invcAngle(angle);
     }
+
+    if (_invY) {
+        angle = invyAngle(angle);
+    }
+
+    return angle;
 }
 
 double CoordFix::fixDx(double dx) const {
     if (_isOnLeft) {
         return dx;
     } else {
-        return invDx(dx);
+        return invcDx(dx);
     }
 }
 
 double CoordFix::fixDy(double dy) const {
-    if (_isOnLeft) {
+    if (_isOnLeft != _invY) {
         return dy;
     } else {
-        return invDy(dy);
+        return invcDy(dy);
     }
 }
 
@@ -79,9 +96,8 @@ MoveF::MoveF() {
     _move = 0;
 }
 
-MoveF::MoveF(Move* m, const CoordFix& fix) {
+MoveF::MoveF(Move* m, const CoordFix* fix) : _fix(fix) {
     _move = m;
-    _fix = fix;
 }
 
 double MoveF::getSpeedUp() const {
@@ -150,8 +166,7 @@ double GameF::getWorldHeight() const {
 
 //
 
-PlayerF::PlayerF(const Player& p, const CoordFix& fix) : Player(p) {
-    _fix = fix;
+PlayerF::PlayerF(const Player& p, const CoordFix* fix) : Player(p), _fix(fix) {
 }
 
 double PlayerF::getNetLeft() const {
@@ -163,41 +178,40 @@ double PlayerF::getNetRight() const {
 }
 
 double PlayerF::getNetFront() const {
-    return _fix.fixX(Player::getNetFront());
+    return _fix->fixX(Player::getNetFront());
 }
 
 double PlayerF::getNetBack() const {
-    return _fix.fixX(Player::getNetBack());
+    return _fix->fixX(Player::getNetBack());
 }
 
 //
 
-UnitF::UnitF(const Unit& u, const CoordFix& fix) : Unit(u) {
-    _fix = fix;
+UnitF::UnitF(const Unit& u, const CoordFix* fix) : Unit(u), _fix(fix) {
 }
 
 double UnitF::getX() const {
-    return _fix.fixX(Unit::getX());
+    return _fix->fixX(Unit::getX());
 }
 
 double UnitF::getY() const {
-    return _fix.fixY(Unit::getY());
+    return _fix->fixY(Unit::getY());
 }
 
 double UnitF::getSpeedX() const {
-    return _fix.fixDx(Unit::getSpeedX());
+    return _fix->fixDx(Unit::getSpeedX());
 }
 
 double UnitF::getSpeedY() const {
-    return _fix.fixDy(Unit::getSpeedY());
+    return _fix->fixDy(Unit::getSpeedY());
 }
 
 double UnitF::getAngle() const {
-    return _fix.fixAngle(Unit::getAngle());
+    return _fix->fixAngle(Unit::getAngle());
 }
 
 double UnitF::getAngleTo(double x, double y) const {
-    return Unit::getAngleTo(_fix.fixX(x), _fix.fixY(y));
+    return Unit::getAngleTo(_fix->fixX(x), _fix->fixY(y));
 }
 
 double UnitF::getAngleTo(const Unit& unit) const {
@@ -205,7 +219,7 @@ double UnitF::getAngleTo(const Unit& unit) const {
 }
 
 double UnitF::getDistanceTo(double x, double y) const {
-    return Unit::getDistanceTo(_fix.fixX(x), _fix.fixY(y));
+    return Unit::getDistanceTo(_fix->fixX(x), _fix->fixY(y));
 }
 
 double UnitF::getDistanceTo(const Unit& unit) const {
@@ -217,32 +231,31 @@ double UnitF::getDistanceTo(const Unit& unit) const {
 HockeyistF::HockeyistF() {
 }
 
-HockeyistF::HockeyistF(const Hockeyist& h, const CoordFix& fix) : Hockeyist(h) {
-    _fix = fix;
+HockeyistF::HockeyistF(const Hockeyist& h, const CoordFix* fix) : Hockeyist(h), _fix(fix) {
 }
 
 double HockeyistF::getX() const {
-    return _fix.fixX(Hockeyist::getX());
+    return _fix->fixX(Hockeyist::getX());
 }
 
 double HockeyistF::getY() const {
-    return _fix.fixY(Hockeyist::getY());
+    return _fix->fixY(Hockeyist::getY());
 }
 
 double HockeyistF::getSpeedX() const {
-    return _fix.fixDx(Hockeyist::getSpeedX());
+    return _fix->fixDx(Hockeyist::getSpeedX());
 }
 
 double HockeyistF::getSpeedY() const {
-    return _fix.fixDy(Hockeyist::getSpeedY());
+    return _fix->fixDy(Hockeyist::getSpeedY());
 }
 
 double HockeyistF::getAngle() const {
-    return _fix.fixAngle(Hockeyist::getAngle());
+    return _fix->fixAngle(Hockeyist::getAngle());
 }
 
 double HockeyistF::getAngleTo(double x, double y) const {
-    return Hockeyist::getAngleTo(_fix.fixX(x), _fix.fixY(y));
+    return Hockeyist::getAngleTo(_fix->fixX(x), _fix->fixY(y));
 }
 
 double HockeyistF::getAngleTo(const Unit& unit) const {
@@ -250,7 +263,7 @@ double HockeyistF::getAngleTo(const Unit& unit) const {
 }
 
 double HockeyistF::getDistanceTo(double x, double y) const {
-    return Hockeyist::getDistanceTo(_fix.fixX(x), _fix.fixY(y));
+    return Hockeyist::getDistanceTo(_fix->fixX(x), _fix->fixY(y));
 }
 
 double HockeyistF::getDistanceTo(const Unit& unit) const {
@@ -259,32 +272,31 @@ double HockeyistF::getDistanceTo(const Unit& unit) const {
 
 //
 
-PuckF::PuckF(const Puck& p, const CoordFix& fix) : Puck(p) {
-    _fix = fix;
+PuckF::PuckF(const Puck& p, const CoordFix* fix) : Puck(p), _fix(fix) {
 }
 
 double PuckF::getX() const {
-    return _fix.fixX(Puck::getX());
+    return _fix->fixX(Puck::getX());
 }
 
 double PuckF::getY() const {
-    return _fix.fixY(Puck::getY());
+    return _fix->fixY(Puck::getY());
 }
 
 double PuckF::getSpeedX() const {
-    return _fix.fixDx(Puck::getSpeedX());
+    return _fix->fixDx(Puck::getSpeedX());
 }
 
 double PuckF::getSpeedY() const {
-    return _fix.fixDy(Puck::getSpeedY());
+    return _fix->fixDy(Puck::getSpeedY());
 }
 
 double PuckF::getAngle() const {
-    return _fix.fixAngle(Puck::getAngle());
+    return _fix->fixAngle(Puck::getAngle());
 }
 
 double PuckF::getAngleTo(double x, double y) const {
-    return Puck::getAngleTo(_fix.fixX(x), _fix.fixY(y));
+    return Puck::getAngleTo(_fix->fixX(x), _fix->fixY(y));
 }
 
 double PuckF::getAngleTo(const Unit& unit) const {
@@ -292,7 +304,7 @@ double PuckF::getAngleTo(const Unit& unit) const {
 }
 
 double PuckF::getDistanceTo(double x, double y) const {
-    return Puck::getDistanceTo(_fix.fixX(x), _fix.fixY(y));
+    return Puck::getDistanceTo(_fix->fixX(x), _fix->fixY(y));
 }
 
 double PuckF::getDistanceTo(const Unit& unit) const {
@@ -304,8 +316,7 @@ double PuckF::getDistanceTo(const Unit& unit) const {
 WorldF::WorldF() {
 }
 
-WorldF::WorldF(const World &w, const CoordFix& fix, const GameF& game) : World(w) {
-    _fix = fix;
+WorldF::WorldF(const World &w, const CoordFix* fix, const GameF& game) : World(w), _fix(fix) {
     _game = game;
 }
 

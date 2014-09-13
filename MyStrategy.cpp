@@ -10,6 +10,27 @@ MyStrategy::MyStrategy() {
     _first = true;
 }
 
+void MyStrategy::move(const Hockeyist& self, const World& world, const Game& game, Move& move) {
+    _game = GameF(game);
+
+    if (_first) {
+        _first = false;
+
+        _fix = CoordFix(_game.getWorldWidth(), _game.getWorldHeight(),
+                        world.getMyPlayer().getNetBack() < _game.getWorldWidth() / 2);
+    }
+
+    _fix.setInvY(false);
+
+    _self = HockeyistF(self, &_fix);
+    _world = WorldF(world, &_fix, _game);
+    _move = MoveF(&move, &_fix);
+
+    act();
+}
+
+//
+
 double MyStrategy::conv0(double x, double z) {
     return (x * M_PI / z / 2);
 }
@@ -41,11 +62,12 @@ void MyStrategy::gotoXY(double x, double y) {
     } else {
         double minspeed = ctg(conv1(angle, z)) * n / ctg(conv1(beta, z));
         if (minspeed < n) {
-            cout << "h1" << endl;
             _move.setSpeedUp(-1);
         }
     }
 }
+
+//
 
 void MyStrategy::act() {
     if (_self.getTeammateIndex() == 1) {
@@ -70,21 +92,4 @@ void MyStrategy::act() {
         _move.setTurn(_self.getAngleTo(_world.getPuck()));
         _move.setAction(TAKE_PUCK);
     }
-}
-
-void MyStrategy::move(const Hockeyist& self, const World& world, const Game& game, Move& move) {
-    _game = GameF(game);
-
-    if (_first) {
-        _first = false;
-
-        _fix = CoordFix(_game.getWorldWidth(), _game.getWorldHeight(),
-                        world.getMyPlayer().getNetBack() < _game.getWorldWidth() / 2);
-    }
-
-    _self = HockeyistF(self, _fix);
-    _world = WorldF(world, _fix, _game);
-    _move = MoveF(&move, _fix);
-
-    act();
 }
