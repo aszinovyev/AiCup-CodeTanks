@@ -91,11 +91,22 @@ bool MyStrategy::isInAttackArea(const UnitF& u) {
 
 //
 
+bool MyStrategy::isNearStick(double x, double y) {
+    return ( _self.getDistanceTo(x, y) <= _game.getStickLength() ) &&
+           ( fabs(_self.getAngleTo(x, y)) <= _game.getStickSector() / 2 );
+}
+
+bool MyStrategy::isNearStick(const UnitF& u) {
+    return isNearStick(u.getX(), u.getY());
+}
+
+//
+
 void MyStrategy::act() {
-    if (_self.getTeammateIndex() == 1) {
-        gotoXY(0, 0);
-        return;
-    }
+//    if (_self.getTeammateIndex() == 1) {
+//        gotoXY(0, 0);
+//        return;
+//    }
 
     _fix.setInvY(_self.getY() > _game.getWorldHeight() / 2);
 
@@ -113,7 +124,32 @@ void MyStrategy::act() {
             gotoXY(_attackAreaDestX, _attackAreaDestY);
         }
     } else {
-        gotoXY(_world.getPuck());
-        _move.setAction(TAKE_PUCK);
+        if (_world.getPuck().getOwnerPlayerId() == _self.getPlayerId()) {
+            gotoXY(DefencePointX, DefencePointY);
+        } else {
+            gotoXY(_world.getPuck());
+            _move.setAction(TAKE_PUCK);
+        }
+
+        if (!isNearStick(_world.getPuck())) {
+            bool teammateNear = false;
+            bool opponentNear = false;
+
+            const vector<HockeyistF> hockeyists = _world.getHockeyists();
+            for (vector<HockeyistF>::const_iterator it = hockeyists.cbegin(); it != hockeyists.cend(); ++it) {
+                const HockeyistF& h = *it;
+                if ((h.getRemainingKnockdownTicks() == 0) && (h.getType() != GOALIE) && isNearStick(h)) {
+                    if (h.isTeammate()) {
+                        teammateNear = true;
+                    } else {
+                        opponentNear = true;
+                    }
+                }
+            }
+
+            if (opponentNear && !teammateNear) {
+                _move.setAction(STRIKE);
+            }
+        }
     }
 }

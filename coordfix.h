@@ -163,9 +163,11 @@ public:
     WorldF();
     WorldF(const World& w, const CoordFix* fix, const GameF& game);
 
-    const vector<PlayerF> getPlayers() const;
+    vector<PlayerF> getPlayers() const;
     PlayerF getMyPlayer() const;
     PlayerF getOpponentPlayer() const;
+
+    vector<HockeyistF> getHockeyists() const;
 
     PuckF getPuck() const;
 

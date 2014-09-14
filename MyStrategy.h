@@ -16,6 +16,9 @@ public:
 private:    
     const double StrikePrecision = M_PI / 180;
 
+    const double DefencePointX = 256;
+    const double DefencePointY = 446.5;
+
     const double AttackAreaX0 = 550;
     const double AttackAreaX1 = 768;
     const double AttackAreaY0 = 170;
@@ -43,6 +46,9 @@ private:
 
     bool isInAttackArea(double x, double y);
     bool isInAttackArea(const UnitF& u);
+
+    bool isNearStick(double x, double y);
+    bool isNearStick(const UnitF& u);
 
     void act();
 };

@@ -352,7 +352,7 @@ WorldF::WorldF(const World &w, const CoordFix* fix, const GameF& game) : World(w
     _game = game;
 }
 
-const vector<PlayerF> WorldF::getPlayers() const {
+vector<PlayerF> WorldF::getPlayers() const {
     vector<PlayerF> res;
     res.push_back(getMyPlayer());
     res.push_back(getOpponentPlayer());
@@ -366,6 +366,17 @@ PlayerF WorldF::getMyPlayer() const {
 
 PlayerF WorldF::getOpponentPlayer() const {
     return PlayerF(World::getOpponentPlayer(), _fix);
+}
+
+vector<HockeyistF> WorldF::getHockeyists() const {
+    const vector<Hockeyist>& in = World::getHockeyists();
+
+    vector<HockeyistF> out;
+    for (vector<Hockeyist>::const_iterator it = in.cbegin(); it != in.cend(); ++it) {
+        out.push_back(HockeyistF(*it, _fix));
+    }
+
+    return out;
 }
 
 PuckF WorldF::getPuck() const {
