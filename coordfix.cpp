@@ -226,7 +226,7 @@ double UnitF::getAngleTo(double x, double y) const {
     return _fix->fixDAngle( Unit::getAngleTo(_fix->fixX(x), _fix->fixY(y)) );
 }
 
-double UnitF::getAngleTo(const Unit& unit) const {
+double UnitF::getAngleTo(const UnitF& unit) const {
     return _fix->fixDAngle( Unit::getAngleTo(unit) );
 }
 
@@ -234,7 +234,7 @@ double UnitF::getDistanceTo(double x, double y) const {
     return Unit::getDistanceTo(_fix->fixX(x), _fix->fixY(y));
 }
 
-double UnitF::getDistanceTo(const Unit& unit) const {
+double UnitF::getDistanceTo(const UnitF& unit) const {
     return Unit::getDistanceTo(unit);
 }
 
@@ -286,7 +286,7 @@ double HockeyistF::getAngleTo(double x, double y) const {
     return UnitF::getAngleTo(x, y);
 }
 
-double HockeyistF::getAngleTo(const Unit& unit) const {
+double HockeyistF::getAngleTo(const UnitF& unit) const {
     return UnitF::getAngleTo(unit);
 }
 
@@ -294,7 +294,7 @@ double HockeyistF::getDistanceTo(double x, double y) const {
     return UnitF::getDistanceTo(x, y);
 }
 
-double HockeyistF::getDistanceTo(const Unit& unit) const {
+double HockeyistF::getDistanceTo(const UnitF& unit) const {
     return UnitF::getDistanceTo(unit);
 }
 
@@ -343,7 +343,7 @@ double PuckF::getAngleTo(double x, double y) const {
     return UnitF::getAngleTo(x, y);
 }
 
-double PuckF::getAngleTo(const Unit& unit) const {
+double PuckF::getAngleTo(const UnitF& unit) const {
     return UnitF::getAngleTo(unit);
 }
 
@@ -351,7 +351,7 @@ double PuckF::getDistanceTo(double x, double y) const {
     return UnitF::getDistanceTo(x, y);
 }
 
-double PuckF::getDistanceTo(const Unit& unit) const {
+double PuckF::getDistanceTo(const UnitF& unit) const {
     return UnitF::getDistanceTo(unit);
 }
 

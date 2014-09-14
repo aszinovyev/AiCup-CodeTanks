@@ -7,6 +7,7 @@
 
 #include "coordfix.h"
 #include "geom.h"
+#include "polygon.h"
 
 class MyStrategy : public Strategy {
 public:
@@ -17,8 +18,7 @@ private:
     const double StrikeAnglePrecision = M_PI / 180;
     const double StrikeAngleCorrection = M_PI / 360;
 
-    const double DefencePointX = 256;
-    const double DefencePointY = 446.5;
+    const Circle DefenceArea = Circle(256, 446.5, 50);
 
     const double AttackAreaX0 = 550;
     const double AttackAreaX1 = 768;

@@ -126,7 +126,11 @@ void MyStrategy::act() {
         }
     } else {
         if (_world.getPuck().getOwnerPlayerId() == _self.getPlayerId()) {
-            gotoXY(DefencePointX, DefencePointY);
+            if (DefenceArea.isInU(_self)) {
+                _move.setTurn(_self.getAngleTo(_world.getPuck()));
+            } else {
+                gotoXY(DefenceArea.getX(), DefenceArea.getY());
+            }
         } else {
             gotoXY(_world.getPuck());
             _move.setAction(TAKE_PUCK);

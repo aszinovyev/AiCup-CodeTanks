@@ -1,7 +1,7 @@
 #include "polygon.h"
 #include "geom.h"
 
-bool Polygon::isIn(const UnitF &u) const {
+bool Polygon::isInU(const UnitF &u) const {
     return isIn(u.getX(), u.getY());
 }
 
@@ -15,6 +15,18 @@ Circle::Circle(double x, double y, double r) {
 
 bool Circle::isIn(double x, double y) const {
     return (Pif2(x - _x, y - _y) <= _r*_r);
+}
+
+double Circle::getX() const {
+    return _x;
+}
+
+double Circle::getY() const {
+    return _y;
+}
+
+double Circle::getR() const {
+    return _r;
 }
 
 //

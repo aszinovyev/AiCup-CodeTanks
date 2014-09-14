@@ -8,7 +8,7 @@ public:
     virtual ~Polygon() {}
 
     virtual bool isIn(double x, double y) const = 0;
-    virtual bool isIn(const UnitF& u) const;
+    virtual bool isInU(const UnitF& u) const;
 };
 
 //
@@ -17,7 +17,11 @@ class Circle : public Polygon {
 public:
     Circle(double x, double y, double r);
 
-    bool isIn(double x, double y) const;
+    virtual bool isIn(double x, double y) const;
+
+    double getX() const;
+    double getY() const;
+    double getR() const;
 
 private:
     double _x;

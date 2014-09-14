@@ -102,9 +102,9 @@ public:
     double getAngle() const;
 
     double getAngleTo(double x, double y) const;
-    double getAngleTo(const Unit& unit) const;
+    double getAngleTo(const UnitF& unit) const;
     double getDistanceTo(double x, double y) const;
-    double getDistanceTo(const Unit& unit) const;
+    double getDistanceTo(const UnitF& unit) const;
 
 private:
     const CoordFix* _fix;
@@ -128,9 +128,9 @@ public:
     double getAngularSpeed() const;
 
     double getAngleTo(double x, double y) const;
-    double getAngleTo(const Unit& unit) const;
+    double getAngleTo(const UnitF& unit) const;
     double getDistanceTo(double x, double y) const;
-    double getDistanceTo(const Unit& unit) const;
+    double getDistanceTo(const UnitF& unit) const;
 
 private:
     const CoordFix* _fix;
@@ -153,9 +153,9 @@ public:
     double getAngularSpeed() const;
 
     double getAngleTo(double x, double y) const;
-    double getAngleTo(const Unit& unit) const;
+    double getAngleTo(const UnitF& unit) const;
     double getDistanceTo(double x, double y) const;
-    double getDistanceTo(const Unit& unit) const;
+    double getDistanceTo(const UnitF& unit) const;
 };
 
 //
