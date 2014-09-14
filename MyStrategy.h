@@ -15,7 +15,7 @@ public:
 
 private:    
     const double StrikeAnglePrecision = M_PI / 180;
-    const double StrikeAngleCorrection = M_PI / 18;
+    const double StrikeAngleCorrection = M_PI / 180;
 
     const double DefencePointX = 256;
     const double DefencePointY = 446.5;
