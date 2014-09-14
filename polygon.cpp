@@ -1,8 +1,8 @@
 #include "polygon.h"
 #include "geom.h"
 
-bool Polygon::isInU(const UnitF &u) const {
-    return isIn(u.getX(), u.getY());
+bool Polygon::containsU(const UnitF &u) const {
+    return contains(u.getX(), u.getY());
 }
 
 //
@@ -13,7 +13,7 @@ Circle::Circle(double x, double y, double r) {
     _r = r;
 }
 
-bool Circle::isIn(double x, double y) const {
+bool Circle::contains(double x, double y) const {
     return (Pif2(x - _x, y - _y) <= _r*_r);
 }
 
@@ -38,6 +38,6 @@ Rectangle::Rectangle(double x0, double x1, double y0, double y1) {
     _y1 = y1;
 }
 
-bool Rectangle::isIn(double x, double y) const {
+bool Rectangle::contains(double x, double y) const {
     return ( (x >= _x0) && (x <= _x1) && (y >= _y0) && (y <= _y1) );
 }

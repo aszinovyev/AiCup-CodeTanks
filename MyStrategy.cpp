@@ -7,6 +7,7 @@ using namespace std;
 
 MyStrategy::MyStrategy() {
     _first = true;
+    _checkInL0 = false;
 }
 
 void MyStrategy::move(const Hockeyist& self, const World& world, const Game& game, Move& move) {
@@ -25,9 +26,6 @@ void MyStrategy::move(const Hockeyist& self, const World& world, const Game& gam
 
     if (_first) {
         _first = false;
-
-        _attackAreaDestX = AttackAreaX0 + self.getRadius();
-        _attackAreaDestY = AttackAreaY0 + _game.getPuckBindingRange() + _world.getPuck().getRadius();
 
         _attackDestX = _world.getOpponentPlayer().getNetFront();
         _attackDestY0 = _world.getOpponentPlayer().getNetTop() + _world.getPuck().getRadius();
@@ -84,23 +82,59 @@ void MyStrategy::gotoXY(const UnitF& u) {
 
 //
 
-bool MyStrategy::isInAttackArea(double x, double y) {
-    return (x > AttackAreaX0 && x < AttackAreaX1 && y > AttackAreaY0 && y < AttackAreaY1);
+bool MyStrategy::isNearStick(const HockeyistF& h, double x, double y) {
+    return ( h.getDistanceTo(x, y) <= _game.getStickLength() ) &&
+           ( fabs(h.getAngleTo(x, y)) <= _game.getStickSector() / 2 );
 }
 
-bool MyStrategy::isInAttackArea(const UnitF& u) {
-    return isInAttackArea(u.getX(), u.getY());
+bool MyStrategy::isNearStick(const HockeyistF& h, const UnitF& u) {
+    return isNearStick(h, u.getX(), u.getY());
+}
+
+bool MyStrategy::isNearStick(double x, double y) {
+    return isNearStick(_self, x, y);
+}
+
+bool MyStrategy::isNearStick(const UnitF& u) {
+    return isNearStick(_self, u);
 }
 
 //
 
-bool MyStrategy::isNearStick(double x, double y) {
-    return ( _self.getDistanceTo(x, y) <= _game.getStickLength() ) &&
-           ( fabs(_self.getAngleTo(x, y)) <= _game.getStickSector() / 2 );
+int MyStrategy::opponentsAttacking(double x, double y) {
+    int res = 0;
+
+    const vector<HockeyistF> hockeyists = _world.getHockeyists();
+    for (vector<HockeyistF>::const_iterator it = hockeyists.cbegin(); it != hockeyists.cend(); ++it) {
+        const HockeyistF& h = *it;
+
+        if (!h.isTeammate() && isNearStick(h, x, y) && (h.getRemainingKnockdownTicks() <= 1)) {
+            ++res;
+        }
+    }
+
+    return res;
 }
 
-bool MyStrategy::isNearStick(const UnitF& u) {
-    return isNearStick(u.getX(), u.getY());
+int MyStrategy::opponentsAttacking(const UnitF& u) {
+    return opponentsAttacking(u.getX(), u.getY());
+}
+
+int MyStrategy::opponentsAttackingHP(const HockeyistF& h, const PuckF& p) {         //Attacking hockeyist with puck
+    int res = 0;
+
+    const vector<HockeyistF> hockeyists = _world.getHockeyists();
+    for (vector<HockeyistF>::const_iterator it = hockeyists.cbegin(); it != hockeyists.cend(); ++it) {
+        const HockeyistF& opp = *it;
+
+        if (!opp.isTeammate() && (opp.getRemainingKnockdownTicks() <= 1)) {
+            if (isNearStick(opp, h.getX(), h.getY()) || isNearStick(opp, p.getX(), p.getY())) {
+                ++res;
+            }
+        }
+    }
+
+    return res;
 }
 
 //
@@ -114,19 +148,43 @@ void MyStrategy::act() {
     _fix.setInvY(_self.getY() > _game.getWorldHeight() / 2);
 
     if (_world.getPuck().getOwnerHockeyistId() == _self.getId()) {
-        if (isInAttackArea(_self)) {
+        if (AttackAreaL0.containsU(_self)) {
+            _checkInL0 = true;
+        }
+
+        if (_checkInL0) {
             double angle = _self.getAngleTo(_attackDestX, _attackDestY1) - StrikeAngleCorrection;
             goAngle(angle - StrikeAnglePrecision / 2);
 
             if ((angle > 0) && (angle < StrikeAnglePrecision)) {
-                _move.setAction(STRIKE);
+                //Can strike
+
+                if ((_world.getPuck().getY() >= _attackDestY0) || !AttackAreaL1.containsU(_self)) {
+                    _move.setAction(STRIKE);        //Last chance to strike
+                } else {
+                    int opps = opponentsAttackingHP(_self, _world.getPuck());
+
+                    if (opps >= 2) {
+                        _move.setAction(STRIKE);
+                    } else if (opps == 1) {
+                        if (!AttackAreaL0.containsU(_self)) {
+                            _move.setAction(STRIKE);
+                        }
+                    }
+                }
             }
         } else {
-            gotoXY(_attackAreaDestX, _attackAreaDestY);
+            gotoXY(AttackAreaDestX, AttackAreaDestY);
+        }
+
+        if (!AttackAreaL1.containsU(_self)) {
+            _checkInL0 = false;
         }
     } else {
+        _checkInL0 = false;
+
         if (_world.getPuck().getOwnerPlayerId() == _self.getPlayerId()) {
-            if (DefenceArea.isInU(_self)) {
+            if (DefenceArea.containsU(_self)) {
                 _move.setTurn(_self.getAngleTo(_world.getPuck()));
             } else {
                 gotoXY(DefenceArea.getX(), DefenceArea.getY());

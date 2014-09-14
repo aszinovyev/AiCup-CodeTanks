@@ -7,8 +7,8 @@ class Polygon {
 public:
     virtual ~Polygon() {}
 
-    virtual bool isIn(double x, double y) const = 0;
-    virtual bool isInU(const UnitF& u) const;
+    virtual bool contains(double x, double y) const = 0;
+    virtual bool containsU(const UnitF& u) const;
 };
 
 //
@@ -17,7 +17,7 @@ class Circle : public Polygon {
 public:
     Circle(double x, double y, double r);
 
-    virtual bool isIn(double x, double y) const;
+    virtual bool contains(double x, double y) const;
 
     double getX() const;
     double getY() const;
@@ -35,7 +35,7 @@ class Rectangle : public Polygon {
 public:
     Rectangle(double x0, double x1, double y0, double y1);
 
-    bool isIn(double x, double y) const;
+    bool contains(double x, double y) const;
 
 private:
     double _x0;

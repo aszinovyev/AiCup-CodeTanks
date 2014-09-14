@@ -1,6 +1,5 @@
 //#include <iostream> //
 
-#include <math.h>
 #include "geom.h"
 
 double NormAngle(double a) {
