@@ -23,7 +23,7 @@ private:
     const Circle AttackAreaL0 = Circle(750, 250, 75);
     const Circle AttackAreaL1 = Circle(AttackAreaL0.getX() + AttackAreaL0.getR() / sqrt(2),
                                        AttackAreaL0.getY() + AttackAreaL0.getR() / sqrt(2),
-                                       AttackAreaL0.getR() * 1.5);
+                                       AttackAreaL0.getR() * 2);
 
     const double AttackAreaDestX = AttackAreaL0.getX();
     const double AttackAreaDestY = AttackAreaL0.getY();
@@ -56,6 +56,7 @@ private:
     int opponentsAttacking(double x, double y);
     int opponentsAttacking(const UnitF& u);
     int opponentsAttackingHP(const HockeyistF& h, const PuckF& p);     //Attacking hockeyist with puck
+    int opponentsReadyToActHP(const HockeyistF& h, const PuckF& p);     //Attacking hockeyist with puck
 
     void act();
 };

@@ -137,6 +137,23 @@ int MyStrategy::opponentsAttackingHP(const HockeyistF& h, const PuckF& p) {     
     return res;
 }
 
+int MyStrategy::opponentsReadyToActHP(const HockeyistF& h, const PuckF& p) {         //Attacking hockeyist with puck
+    int res = 0;
+
+    const vector<HockeyistF> hockeyists = _world.getHockeyists();
+    for (vector<HockeyistF>::const_iterator it = hockeyists.cbegin(); it != hockeyists.cend(); ++it) {
+        const HockeyistF& opp = *it;
+
+        if (!opp.isTeammate() && (opp.getRemainingCooldownTicks() <= 1) && (opp.getRemainingKnockdownTicks() <= 1)) {
+            if (isNearStick(opp, h.getX(), h.getY()) || isNearStick(opp, p.getX(), p.getY())) {
+                ++res;
+            }
+        }
+    }
+
+    return res;
+}
+
 //
 
 void MyStrategy::act() {
@@ -162,13 +179,15 @@ void MyStrategy::act() {
                 if ((_world.getPuck().getY() >= _attackDestY0) || !AttackAreaL1.containsU(_self)) {
                     _move.setAction(STRIKE);        //Last chance to strike
                 } else {
-                    int opps = opponentsAttackingHP(_self, _world.getPuck());
+                    if (opponentsReadyToActHP(_self, _world.getPuck()) > 0) {
+                        int opps = opponentsAttackingHP(_self, _world.getPuck());
 
-                    if (opps >= 2) {
-                        _move.setAction(STRIKE);
-                    } else if (opps == 1) {
-                        if (!AttackAreaL0.containsU(_self)) {
+                        if (opps >= 2) {
                             _move.setAction(STRIKE);
+                        } else if (opps == 1) {
+                            if (!AttackAreaL0.containsU(_self)) {
+                                _move.setAction(STRIKE);
+                            }
                         }
                     }
                 }
