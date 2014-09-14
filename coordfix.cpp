@@ -46,6 +46,10 @@ double CoordFix::invyAngle(double angle) const {
     return -angle;
 }
 
+double CoordFix::invyDAngle(double dAngle) const {
+    return -dAngle;
+}
+
 double CoordFix::fixX(double x) const {
     if (_isOnLeft) {
         return x;
@@ -90,6 +94,14 @@ double CoordFix::fixDy(double dy) const {
     }
 }
 
+double CoordFix::fixDAngle(double dAngle) const {
+    if (_invY) {
+        return -dAngle;
+    } else {
+        return dAngle;
+    }
+}
+
 //
 
 MoveF::MoveF() {
@@ -109,11 +121,11 @@ void MoveF::setSpeedUp(const double speedUp) {
 }
 
 double MoveF::getTurn() const {
-    return _move->getTurn();
+    return _fix->fixDAngle(_move->getTurn());
 }
 
 void MoveF::setTurn(const double turn) {
-    return _move->setTurn(turn);
+    return _move->setTurn(_fix->fixDAngle(turn));
 }
 
 ActionType MoveF::getAction() const {
@@ -133,11 +145,11 @@ void MoveF::setPassPower(const double passPower) {
 }
 
 double MoveF::getPassAngle() const {
-    return _move->getPassAngle();
+    return _fix->fixDAngle(_move->getPassAngle());
 }
 
 void MoveF::setPassAngle(const double passAngle) {
-    _move->setPassAngle(passAngle);
+    _move->setPassAngle(_fix->fixDAngle(passAngle));
 }
 
 int MoveF::getTeammateIndex() const {
@@ -211,11 +223,11 @@ double UnitF::getAngle() const {
 }
 
 double UnitF::getAngleTo(double x, double y) const {
-    return Unit::getAngleTo(_fix->fixX(x), _fix->fixY(y));
+    return _fix->fixDAngle( Unit::getAngleTo(_fix->fixX(x), _fix->fixY(y)) );
 }
 
 double UnitF::getAngleTo(const Unit& unit) const {
-    return Unit::getAngleTo(unit);
+    return _fix->fixDAngle( Unit::getAngleTo(unit) );
 }
 
 double UnitF::getDistanceTo(double x, double y) const {

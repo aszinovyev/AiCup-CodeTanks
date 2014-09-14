@@ -14,7 +14,8 @@ public:
     void move(const model::Hockeyist& self, const model::World& world, const model::Game& game, model::Move& move);
 
 private:    
-    const double StrikePrecision = M_PI / 180;
+    const double StrikeAnglePrecision = M_PI / 180;
+    const double StrikeAngleCorrection = M_PI / 18;
 
     const double DefencePointX = 256;
     const double DefencePointY = 446.5;
@@ -41,6 +42,7 @@ private:
 
     double conv0(double x, double z);
     double conv1(double x, double z);
+    void goAngle(double a);
     void gotoXY(double x, double y);
     void gotoXY(const UnitF& u);
 

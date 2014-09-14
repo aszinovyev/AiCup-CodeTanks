@@ -47,32 +47,35 @@ double MyStrategy::conv1(double x, double z) {
     return M_PI / 2 * (x + M_PI - 2 * z) / (M_PI - z);
 }
 
-void MyStrategy::gotoXY(double x, double y) {
+void MyStrategy::goAngle(double a) {
     const double z = M_PI * 2 / 3;
     const double m = 6;
     const double n = -4;
     const double alpha = M_PI / 18;
     const double beta = M_PI - alpha;
 
-    double angle = _self.getAngleTo(x, y);
-    _move.setTurn(angle);
+    _move.setTurn(a);
 
-    angle = fabs(angle);
+    a = fabs(a);
 
     double realspeed = Pif(_self.getSpeedX(), _self.getSpeedY());
     _move.setSpeedUp(0);
 
-    if (angle <= z) {
-        double maxspeed = ctg(conv0(angle, z)) * m / ctg(conv0(alpha, z));
+    if (a <= z) {
+        double maxspeed = ctg(conv0(a, z)) * m / ctg(conv0(alpha, z));
         if (maxspeed > realspeed ) {
             _move.setSpeedUp(1);
         }
     } else {
-        double minspeed = ctg(conv1(angle, z)) * n / ctg(conv1(beta, z));
+        double minspeed = ctg(conv1(a, z)) * n / ctg(conv1(beta, z));
         if (minspeed < n) {
             _move.setSpeedUp(-1);
         }
     }
+}
+
+void MyStrategy::gotoXY(double x, double y) {
+    goAngle(_self.getAngleTo(x, y));
 }
 
 void MyStrategy::gotoXY(const UnitF& u) {
@@ -112,12 +115,10 @@ void MyStrategy::act() {
 
     if (_world.getPuck().getOwnerHockeyistId() == _self.getId()) {
         if (isInAttackArea(_self)) {
-            gotoXY(_attackDestX, _attackDestY1);
+            double angle = _self.getAngleTo(_attackDestX, _attackDestY1) - StrikeAngleCorrection;
+            goAngle(angle - StrikeAnglePrecision / 2);
 
-            double angle = _self.getAngleTo(_attackDestX, _attackDestY1);
-            _move.setTurn(angle - StrikePrecision / 2);
-
-            if ((angle > 0) && (angle < StrikePrecision)) {
+            if ((angle > 0) && (angle < StrikeAnglePrecision)) {
                 _move.setAction(STRIKE);
             }
         } else {

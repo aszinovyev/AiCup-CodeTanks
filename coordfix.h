@@ -21,6 +21,7 @@ public:
     double fixAngle(double angle) const;
     double fixDx(double dx) const;
     double fixDy(double dy) const;
+    double fixDAngle(double dAngle) const;
 
 private:
     double _w;
@@ -34,6 +35,7 @@ private:
     double invcDy(double dy) const;
 
     double invyAngle(double angle) const;
+    double invyDAngle(double dAngle) const;
 };
 
 //
