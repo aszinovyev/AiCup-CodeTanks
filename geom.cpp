@@ -14,8 +14,12 @@ double NormAngle(double a) {
     return a;
 }
 
+double Pif2(double a, double b) {
+    return a*a + b*b;
+}
+
 double Pif(double a, double b) {
-    return sqrt(a*a + b*b);
+    return sqrt(Pif2(a, b));
 }
 
 double ctg(double a) {

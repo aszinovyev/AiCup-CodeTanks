@@ -5,6 +5,8 @@
 //#define _USE_MATH_DEFINES
 
 double NormAngle(double a);
+
+double Pif2(double a, double b);
 double Pif(double a, double b);
 
 double ctg(double a);
