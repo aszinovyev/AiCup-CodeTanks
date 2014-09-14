@@ -210,7 +210,16 @@ void MyStrategy::act() {
             }
         } else {
             gotoXY(_world.getPuck());
-            _move.setAction(TAKE_PUCK);
+
+            if (isNearStick(_world.getPuck())) {
+                if ( (_world.getPuck().getOwnerPlayerId() == _world.getOpponentPlayer().getId()) &&
+                     (_world.getPuck().getX() < _world.getWidth() / 2) )
+                {
+                    _move.setAction(STRIKE);
+                } else {
+                    _move.setAction(TAKE_PUCK);
+                }
+            }
         }
 
         if (!isNearStick(_world.getPuck())) {
