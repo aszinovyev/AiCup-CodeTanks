@@ -1,7 +1,9 @@
+#include <cassert>
+
 #include "polygon.h"
 #include "geom.h"
 
-bool Polygon::containsU(const UnitF &u) const {
+bool IPolygon::containsU(const UnitF &u) const {
     return contains(u.getX(), u.getY());
 }
 
@@ -40,4 +42,26 @@ Rectangle::Rectangle(double x0, double x1, double y0, double y1) {
 
 bool Rectangle::contains(double x, double y) const {
     return ( (x >= _x0) && (x <= _x1) && (y >= _y0) && (y <= _y1) );
+}
+
+//
+
+Polygon::Polygon(vector<double> x, vector<double> y) {
+    assert(x.size() > 2);
+    assert(x.size() == y.size());
+
+    _x = x;
+    _y = y;
+}
+
+bool Polygon::contains(double x, double y) const {
+    bool sign = (orientedS(_x[_x.size() - 1], _y[_y.size() - 1], _x[0], _y[0], x, y) > 0);
+
+    for (unsigned int i = 0; i < _x.size() - 1; ++i) {
+        if ( (orientedS(_x[i], _y[i], _x[i + 1], _y[i + 1], x, y) > 0) != sign ) {
+            return false;
+        }
+    }
+
+    return true;
 }

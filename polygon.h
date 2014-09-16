@@ -3,9 +3,9 @@
 
 #include "coordfix.h"
 
-class Polygon {
+class IPolygon {
 public:
-    virtual ~Polygon() {}
+    virtual ~IPolygon() {}
 
     virtual bool contains(double x, double y) const = 0;
     virtual bool containsU(const UnitF& u) const;
@@ -13,7 +13,7 @@ public:
 
 //
 
-class Circle : public Polygon {
+class Circle : public IPolygon {
 public:
     Circle(double x, double y, double r);
 
@@ -31,7 +31,7 @@ private:
 
 //
 
-class Rectangle : public Polygon {
+class Rectangle : public IPolygon {
 public:
     Rectangle(double x0, double x1, double y0, double y1);
 
@@ -42,6 +42,17 @@ private:
     double _x1;
     double _y0;
     double _y1;
+};
+
+class Polygon : public IPolygon {
+public:
+    Polygon(vector<double> x, vector<double> y);
+
+    bool contains(double x, double y) const;
+
+private:
+    vector<double> _x;
+    vector<double> _y;
 };
 
 #endif // POLYGON_H
