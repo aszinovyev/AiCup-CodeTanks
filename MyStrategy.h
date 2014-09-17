@@ -20,17 +20,15 @@ private:
 
     const Circle DefenceArea = Circle(256, 446.5, 50);
 
-    const Circle AttackAreaL0 = Circle(750, 250, 75);
-    const Circle AttackAreaL1 = Circle(AttackAreaL0.getX() + AttackAreaL0.getR() / sqrt(2),
-                                       AttackAreaL0.getY() + AttackAreaL0.getR() / sqrt(2),
-                                       AttackAreaL0.getR() * 2);
-
-    const double AttackAreaDestX = AttackAreaL0.getX();
-    const double AttackAreaDestY = AttackAreaL0.getY();
-
     double _attackDestX;
     double _attackDestY0;
     double _attackDestY1;
+
+    double _attackAreaDestX;
+    double _attackAreaDestY;
+
+    SectorX _attackAreaL0;
+    SectorX _attackAreaL1;
 
     bool _first;
     CoordFix _fix;

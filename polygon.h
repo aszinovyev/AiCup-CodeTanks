@@ -55,4 +55,22 @@ private:
     vector<double> _y;
 };
 
+//
+
+class SectorX : public IPolygon {
+public:
+    SectorX() {}
+    SectorX(double x, double y, double rs, double rb, double a1, double a2);
+
+    bool contains(double x, double y) const;
+
+private:
+    double _x;
+    double _y;
+    double _rs;
+    double _rb;
+    double _a1;
+    double _a2;
+};
+
 #endif // POLYGON_H

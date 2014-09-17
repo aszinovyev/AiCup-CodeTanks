@@ -1,5 +1,6 @@
 #include <iostream>
 #include <math.h>
+#include <cassert>
 
 #include "MyStrategy.h"
 
@@ -30,6 +31,17 @@ void MyStrategy::move(const Hockeyist& self, const World& world, const Game& gam
         _attackDestX = _world.getOpponentPlayer().getNetFront();
         _attackDestY0 = _world.getOpponentPlayer().getNetTop() + _world.getPuck().getRadius();
         _attackDestY1 = _fix.invcY(_attackDestY0);
+
+        _attackAreaDestX = 775;
+        _attackAreaDestY = 300;
+
+//        const double rs = Pif(_attackDestX - 1000, _attackAreaDestY - 350);
+//        cout << rs << endl;
+        _attackAreaL0 = SectorX(_attackDestX, _attackDestY1, 385, 500, -2.7792, -2.2689);
+        _attackAreaL1 = SectorX(_attackDestX, _attackDestY1, 250/*rs*/, 500, -2.7792, -2.2689);
+
+        assert(_attackAreaL0.contains(_attackAreaDestX, _attackAreaDestY));
+        assert(_attackAreaL1.contains(_attackAreaDestX, _attackAreaDestY));
     }
 
     act();
@@ -165,7 +177,7 @@ void MyStrategy::act() {
     _fix.setInvY(_self.getY() > _game.getWorldHeight() / 2);
 
     if (_world.getPuck().getOwnerHockeyistId() == _self.getId()) {
-        if (AttackAreaL0.containsU(_self)) {
+        if (_attackAreaL0.containsU(_self)) {
             _checkInL0 = true;
         }
 
@@ -176,7 +188,7 @@ void MyStrategy::act() {
             if ((angle > 0) && (angle < StrikeAnglePrecision)) {
                 //Can strike
 
-                if ((_world.getPuck().getY() >= _attackDestY0) || !AttackAreaL1.containsU(_self)) {
+                if ((_world.getPuck().getY() >= _attackDestY0) || !_attackAreaL1.containsU(_self)) {
                     _move.setAction(STRIKE);        //Last chance to strike
                 } else {
                     if (opponentsReadyToActHP(_self, _world.getPuck()) > 0) {
@@ -185,7 +197,7 @@ void MyStrategy::act() {
                         if (opps >= 2) {
                             _move.setAction(STRIKE);
                         } else if (opps == 1) {
-                            if (!AttackAreaL0.containsU(_self)) {
+                            if (!_attackAreaL0.containsU(_self)) {
                                 _move.setAction(STRIKE);
                             }
                         }
@@ -193,10 +205,10 @@ void MyStrategy::act() {
                 }
             }
         } else {
-            gotoXY(AttackAreaDestX, AttackAreaDestY);
+            gotoXY(_attackAreaDestX, _attackAreaDestY);
         }
 
-        if (!AttackAreaL1.containsU(_self)) {
+        if (!_attackAreaL1.containsU(_self)) {
             _checkInL0 = false;
         }
     } else {
