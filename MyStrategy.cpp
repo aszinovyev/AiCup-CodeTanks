@@ -168,13 +168,60 @@ int MyStrategy::opponentsReadyToActHP(const HockeyistF& h, const PuckF& p) {    
 
 //
 
-void MyStrategy::act() {
-//    if (_self.getTeammateIndex() == 1) {
-//        gotoXY(0, 0);
-//        return;
-//    }
+void MyStrategy::defend() {
+    const double x0 = _world.getMyPlayer().getNetFront();
+    const double y0 = ( _world.getMyPlayer().getNetTop() + _world.getMyPlayer().getNetBottom() ) / 2;
 
+    const double puckX = _world.getPuck().getX();
+    const double puckY = _world.getPuck().getY();
+
+    double distToPuck = Pif(x0 - puckX, y0 - puckY);
+
+    double x = x0 + (puckX - x0) / distToPuck * DefenceAreaDist;
+    double y = y0 + (puckY - y0) / distToPuck * DefenceAreaDist;
+
+    if (Circle(x, y, DefenceAreaR).containsU(_self)) {
+        _move.setTurn(_self.getAngleTo(_world.getPuck()));
+    } else {
+        gotoXY(x, y);
+    }
+}
+
+int MyStrategy::nearestToPuck() {
+    double len = Inf;
+    int res = -1;
+
+    vector<HockeyistF> h = _world.getHockeyists();
+    for (unsigned int i = 0; i < h.size(); ++i) {
+        if (h[i].isTeammate()) {
+            double nwlen = Pif2(_world.getPuck().getX() - h[i].getX(), _world.getPuck().getY() - h[i].getY());
+
+            if (nwlen < len) {
+                len = nwlen;
+                res = h[i].getId();
+            }
+        }
+    }
+
+    return res;
+}
+
+//
+
+bool MyStrategy::isOnMyHalf(double x) {
+    return (x < _world.getWidth() / 2);
+}
+
+bool MyStrategy::isOnMyHalf(const UnitF& u) {
+    return isOnMyHalf(u.getX());
+}
+
+//
+
+void MyStrategy::act() {
     _fix.setInvY(_self.getY() > _game.getWorldHeight() / 2);
+
+    defend();
 
     if (_world.getPuck().getOwnerHockeyistId() == _self.getId()) {
         if (_attackAreaL0.containsU(_self)) {
@@ -215,17 +262,17 @@ void MyStrategy::act() {
         _checkInL0 = false;
 
         if (_world.getPuck().getOwnerPlayerId() == _self.getPlayerId()) {
-            if (DefenceArea.containsU(_self)) {
-                _move.setTurn(_self.getAngleTo(_world.getPuck()));
-            } else {
-                gotoXY(DefenceArea.getX(), DefenceArea.getY());
-            }
+            defend();
         } else {
-            gotoXY(_world.getPuck());
+            if ( (nearestToPuck() == _self.getId()) || isOnMyHalf(_world.getPuck()) ) {
+                gotoXY(_world.getPuck());
+            } else {
+                defend();
+            }
 
             if (isNearStick(_world.getPuck())) {
                 if ( (_world.getPuck().getOwnerPlayerId() == _world.getOpponentPlayer().getId()) &&
-                     (_world.getPuck().getX() < _world.getWidth() / 2) )
+                     isOnMyHalf(_world.getPuck()) )
                 {
                     _move.setAction(STRIKE);
                 } else {

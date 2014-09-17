@@ -15,6 +15,7 @@ public:
 
 class Circle : public IPolygon {
 public:
+    Circle() {}
     Circle(double x, double y, double r);
 
     virtual bool contains(double x, double y) const;

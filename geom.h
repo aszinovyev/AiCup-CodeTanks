@@ -5,6 +5,8 @@
 
 #include <math.h>
 
+const int Inf = 1234567890;
+
 double isEqual(double a, double b, double eps = 10e-6);
 
 double NormAngle(double a);

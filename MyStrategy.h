@@ -18,7 +18,8 @@ private:
     const double StrikeAnglePrecision = M_PI / 180;
     const double StrikeAngleCorrection = M_PI / 360;
 
-    const Circle DefenceArea = Circle(256, 446.5, 50);
+    const double DefenceAreaR = 50;
+    const double DefenceAreaDist = 190;
 
     double _attackDestX;
     double _attackDestY0;
@@ -55,6 +56,12 @@ private:
     int opponentsAttacking(const UnitF& u);
     int opponentsAttackingHP(const HockeyistF& h, const PuckF& p);     //Attacking hockeyist with puck
     int opponentsReadyToActHP(const HockeyistF& h, const PuckF& p);     //Attacking hockeyist with puck
+
+    void defend();
+    int nearestToPuck();
+
+    bool isOnMyHalf(double x);
+    bool isOnMyHalf(const UnitF& u);
 
     void act();
 };
