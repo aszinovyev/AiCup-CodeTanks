@@ -36,3 +36,25 @@ double vectorMul(double x1, double y1, double x2, double y2) {
 double orientedS(double x1, double y1, double x2, double y2, double x3, double y3) {
     return vectorMul(x2 - x1, y2 - y1, x3 - x1, y3 - y1);
 }
+
+bool intersection(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4,
+                  double& x, double& y)
+{
+    const double a1 = y1 - y2;
+    const double b1 = x2 - x1;
+    const double c1 = x1*y2 - x2*y1;
+
+    const double a2 = y3 - y4;
+    const double b2 = x4 - x3;
+    const double c2 = x3*y4 - x4*y3;
+
+    const double d = a1*b2 - a2*b1;
+
+    if (d == 0) {
+        return false;
+    }
+
+    x = (b1*c2 - b2*c1) / d;
+    y = (a2*c1 - a1*c2) / d;
+    return true;
+}

@@ -7,7 +7,7 @@
 
 #include "coordfix.h"
 #include "geom.h"
-#include "polygon.h"
+#include "shape.h"
 
 class MyStrategy : public Strategy {
 public:
@@ -21,15 +21,20 @@ private:
     const double DefenceAreaR = 50;
     const double DefenceAreaDist = 190;
 
+    const double ApproximateDeadZoneX0 = 15;
+    const double ApproximateDeadZoneX1 = 35;
+    const double DangerousPuckSpeed = 13;
+
+    const double AttackAreaDestX = 775;
+    const double AttackAreaDestY = 300;
+
     double _attackDestX;
     double _attackDestY0;
     double _attackDestY1;
 
-    double _attackAreaDestX;
-    double _attackAreaDestY;
-
-    SectorX _attackAreaL0;
-    SectorX _attackAreaL1;
+    Sector _attackPuckArea;
+    ShapeSubtraction<Sector, Sector> _attackAreaL0;
+    ShapeSubtraction<Sector, Rectangle> _attackAreaL1;
 
     bool _first;
     CoordFix _fix;
@@ -62,6 +67,9 @@ private:
 
     bool isOnMyHalf(double x);
     bool isOnMyHalf(const UnitF& u);
+
+    bool isPuckGoingToMyNet();
+    bool canApproximatelyHitPuckToNet();
 
     void act();
 };

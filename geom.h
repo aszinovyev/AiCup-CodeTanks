@@ -19,4 +19,7 @@ double ctg(double a);
 double vectorMul(double x1, double y1, double x2, double y2);
 double orientedS(double x1, double y1, double x2, double y2, double x3, double y3);
 
+bool intersection(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4,
+                  double& x, double& y);
+
 #endif // GEOM_H

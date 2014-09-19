@@ -1,9 +1,9 @@
 #include <cassert>
 
-#include "polygon.h"
+#include "shape.h"
 #include "geom.h"
 
-bool IPolygon::containsU(const UnitF &u) const {
+bool Shape::containsU(const UnitF &u) const {
     return contains(u.getX(), u.getY());
 }
 
@@ -68,18 +68,17 @@ bool Polygon::contains(double x, double y) const {
 
 //
 
-SectorX::SectorX(double x, double y, double rs, double rb, double a1, double a2) {
+Sector::Sector(double x, double y, double r, double a1, double a2) {
     _x = x;
     _y = y;
-    _rb = rb;
-    _rs = rs;
+    _r = r;
     _a1 = a1;
     _a2 = a2;
 }
 
-bool SectorX::contains(double x, double y) const {
+bool Sector::contains(double x, double y) const {
     double rSqr = Pif2(_x - x, _y - y);
     double a = atan2(y - _y, x - _x);
 
-    return ( (rSqr > _rs*_rs) && (rSqr < _rb*_rb) && (a > _a1) && (a < _a2) );
+    return ( (rSqr <= _r*_r) && (a >= _a1) && (a <= _a2) );
 }

@@ -32,16 +32,17 @@ void MyStrategy::move(const Hockeyist& self, const World& world, const Game& gam
         _attackDestY0 = _world.getOpponentPlayer().getNetTop() + _world.getPuck().getRadius();
         _attackDestY1 = _fix.invcY(_attackDestY0);
 
-        _attackAreaDestX = 775;
-        _attackAreaDestY = 300;
+        const double a1 = -2.7792;
+        const double a2 = -2.2689;
 
-//        const double rs = Pif(_attackDestX - 1000, _attackAreaDestY - 350);
-//        cout << rs << endl;
-        _attackAreaL0 = SectorX(_attackDestX, _attackDestY1, 385, 500, -2.7792, -2.2689);
-        _attackAreaL1 = SectorX(_attackDestX, _attackDestY1, 250/*rs*/, 500, -2.7792, -2.2689);
+        _attackPuckArea = Sector(_attackDestX, _attackDestY1, 500, a1, a2);
+        _attackAreaL1 = ShapeSubtraction<Sector, Rectangle>
+                        ( _attackPuckArea, Rectangle(0, _world.getWidth(), _attackDestY0, _world.getHeight()) );
+        _attackAreaL0 = ShapeSubtraction<Sector, Sector>
+                        ( _attackPuckArea, Sector(_attackDestX, _attackDestY1, 385, a1, a2) );
 
-        assert(_attackAreaL0.contains(_attackAreaDestX, _attackAreaDestY));
-        assert(_attackAreaL1.contains(_attackAreaDestX, _attackAreaDestY));
+        assert(_attackAreaL0.contains(AttackAreaDestX, AttackAreaDestY));
+        assert(_attackAreaL1.contains(AttackAreaDestX, AttackAreaDestY));
     }
 
     act();
@@ -218,6 +219,16 @@ bool MyStrategy::isOnMyHalf(const UnitF& u) {
 
 //
 
+bool MyStrategy::isPuckGoingToMyNet() {
+
+}
+
+bool MyStrategy::canApproximatelyHitPuckToNet() {
+
+}
+
+//
+
 void MyStrategy::act() {
     _fix.setInvY(_self.getY() > _game.getWorldHeight() / 2);
 
@@ -252,7 +263,7 @@ void MyStrategy::act() {
                 }
             }
         } else {
-            gotoXY(_attackAreaDestX, _attackAreaDestY);
+            gotoXY(AttackAreaDestX, AttackAreaDestY);
         }
 
         if (!_attackAreaL1.containsU(_self)) {
