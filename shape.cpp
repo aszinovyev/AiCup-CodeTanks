@@ -1,7 +1,10 @@
+#include <iostream>
 #include <cassert>
 
 #include "shape.h"
 #include "geom.h"
+
+using namespace std;
 
 bool Shape::containsU(const UnitF &u) const {
     return contains(u.getX(), u.getY());
@@ -81,4 +84,31 @@ bool Sector::contains(double x, double y) const {
     double a = atan2(y - _y, x - _x);
 
     return ( (rSqr <= _r*_r) && (a >= _a1) && (a <= _a2) );
+}
+
+//
+
+ShapeSubtraction::ShapeSubtraction() {
+    _s1 = 0;
+    _s2 = 0;
+}
+
+ShapeSubtraction::~ShapeSubtraction() {
+    delete _s1;
+    delete _s2;
+
+    _s1 = 0;
+    _s2 = 0;
+}
+
+void ShapeSubtraction::set(Shape* s1, Shape* s2) {
+    delete _s1;
+    delete _s2;
+
+    _s1 = s1;
+    _s2 = s2;
+}
+
+bool ShapeSubtraction::contains(double x, double y) const {
+    return (_s1->contains(x, y) && !_s2->contains(x, y));
 }

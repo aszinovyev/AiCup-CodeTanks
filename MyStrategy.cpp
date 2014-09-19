@@ -36,10 +36,10 @@ void MyStrategy::move(const Hockeyist& self, const World& world, const Game& gam
         const double a2 = -2.2689;
 
         _attackPuckArea = Sector(_attackDestX, _attackDestY1, 500, a1, a2);
-        _attackAreaL1 = ShapeSubtraction<Sector, Rectangle>
-                        ( _attackPuckArea, Rectangle(0, _world.getWidth(), _attackDestY0, _world.getHeight()) );
-        _attackAreaL0 = ShapeSubtraction<Sector, Sector>
-                        ( _attackPuckArea, Sector(_attackDestX, _attackDestY1, 385, a1, a2) );
+        _attackAreaL1.set
+                ( new Sector(_attackPuckArea), new Rectangle(0, _world.getWidth(), _attackDestY0, _world.getHeight()) );
+        _attackAreaL0.set
+                ( new Sector(_attackPuckArea), new Sector(_attackDestX, _attackDestY1, 385, a1, a2) );
 
         assert(_attackAreaL0.contains(AttackAreaDestX, AttackAreaDestY));
         assert(_attackAreaL1.contains(AttackAreaDestX, AttackAreaDestY));

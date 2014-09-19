@@ -37,7 +37,7 @@ public:
     Rectangle() {}
     Rectangle(double x0, double x1, double y0, double y1);
 
-    bool contains(double x, double y) const;
+    virtual bool contains(double x, double y) const;
 
 private:
     double _x0;
@@ -50,7 +50,7 @@ class Polygon : public Shape {
 public:
     Polygon(vector<double> x, vector<double> y);
 
-    bool contains(double x, double y) const;
+    virtual bool contains(double x, double y) const;
 
 private:
     vector<double> _x;
@@ -64,7 +64,7 @@ public:
     Sector() {}
     Sector(double x, double y, double r, double a1, double a2);
 
-    bool contains(double x, double y) const;
+    virtual bool contains(double x, double y) const;
 
 private:
     double _x;
@@ -76,22 +76,26 @@ private:
 
 //
 
-template<class T1, class T2>
 class ShapeSubtraction : public Shape {
 public:
-    ShapeSubtraction() {}
-    ShapeSubtraction(const T1& s1, const T2& s2) {
-        _s1 = s1;
-        _s2 = s2;
-    }
+    ShapeSubtraction();
+    virtual ~ShapeSubtraction();
 
-    bool contains(double x, double y) const {
-        return (_s1.contains(x, y) && !_s2.contains(x, y));
-    }
+    void set(Shape* s1, Shape* s2);
+
+    virtual bool contains(double x, double y) const;
 
 private:
-    T1 _s1;
-    T2 _s2;
+    ShapeSubtraction(const ShapeSubtraction& s) {
+        (void)s;
+    }
+    ShapeSubtraction& operator=(const ShapeSubtraction& s) {
+        (void)s;
+        return *this;
+    }
+
+    Shape* _s1;
+    Shape* _s2;
 };
 
 #endif // POLYGON_H

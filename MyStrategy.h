@@ -33,8 +33,8 @@ private:
     double _attackDestY1;
 
     Sector _attackPuckArea;
-    ShapeSubtraction<Sector, Sector> _attackAreaL0;
-    ShapeSubtraction<Sector, Rectangle> _attackAreaL1;
+    ShapeSubtraction _attackAreaL0;
+    ShapeSubtraction _attackAreaL1;
 
     bool _first;
     CoordFix _fix;
