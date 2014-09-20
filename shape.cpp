@@ -112,3 +112,19 @@ void ShapeSubtraction::set(Shape* s1, Shape* s2) {
 bool ShapeSubtraction::contains(double x, double y) const {
     return (_s1->contains(x, y) && !_s2->contains(x, y));
 }
+
+//
+
+ShapeInvX::ShapeInvX(const Shape& s, const double width) : _s(s), _width(width) {
+}
+
+bool ShapeInvX::contains(double x, double y) const {
+    return _s.contains(_width - x, y);
+}
+
+ShapeInvY::ShapeInvY(const Shape& s, const double height) : _s(s), _height(height) {
+}
+
+bool ShapeInvY::contains(double x, double y) const {
+    return _s.contains(x, _height - y);
+}

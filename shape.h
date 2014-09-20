@@ -98,4 +98,28 @@ private:
     Shape* _s2;
 };
 
+//
+
+class ShapeInvX : public Shape {
+public:
+    ShapeInvX(const Shape& s, const double width);
+
+    virtual bool contains(double x, double y) const;
+
+private:
+    const Shape& _s;
+    const double _width;
+};
+
+class ShapeInvY : public Shape {
+public:
+    ShapeInvY(const Shape& s, const double height);
+
+    virtual bool contains(double x, double y) const;
+
+private:
+    const Shape& _s;
+    const double _height;
+};
+
 #endif // POLYGON_H

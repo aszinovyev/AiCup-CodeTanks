@@ -21,8 +21,8 @@ private:
     const double DefenceAreaR = 50;
     const double DefenceAreaDist = 190;
 
-    const double ApproximateDeadZoneX0 = 15;
-    const double ApproximateDeadZoneX1 = 35;
+    const double ApproximateDeadZoneY0 = 15;
+    const double ApproximateDeadZoneY1 = 35;
     const double DangerousPuckSpeed = 13;
 
     const double AttackAreaDestX = 775;

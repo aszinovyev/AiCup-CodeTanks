@@ -45,6 +45,7 @@ void MyStrategy::move(const Hockeyist& self, const World& world, const Game& gam
         assert(_attackAreaL1.contains(AttackAreaDestX, AttackAreaDestY));
     }
 
+    _fix.setInvY(_self.getY() > _game.getWorldHeight() / 2);
     act();
 }
 
@@ -220,7 +221,33 @@ bool MyStrategy::isOnMyHalf(const UnitF& u) {
 //
 
 bool MyStrategy::isPuckGoingToMyNet() {
+    PuckF puck = _world.getPuck();
 
+    if ( (puck.getSpeedX() < 0) && (Pif(puck.getSpeedX(), puck.getSpeedY()) >= DangerousPuckSpeed) ) {
+        double insX;
+        double insY;
+        bool ok = intersection( puck.getX(), puck.getY(), puck.getX() + puck.getSpeedX(), puck.getY() + puck.getSpeedY(),
+                                _world.getMyPlayer().getNetFront(), 0, _world.getMyPlayer().getNetFront(), 1000,
+                                insX, insY );
+
+        if (!ok) {
+            cout << __FILE__ << " " <<__LINE__ << endl;
+        }
+
+        ShapeInvX dangArea(_attackPuckArea, _world.getWidth());
+
+        double y1 = _world.getMyPlayer().getNetTop() + ApproximateDeadZoneY0;
+        double y2 = _world.getMyPlayer().getNetTop() + ApproximateDeadZoneY1;
+
+        if ( dangArea.containsU(puck) && (insY >= _fix.invcY(y2)) && (insY <= _fix.invcY(y1)) ) {
+            return true;
+        }
+        if ( ShapeInvY(dangArea, _world.getHeight()).containsU(puck) && (insY >= y1) && (insY <= y2) ) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool MyStrategy::canApproximatelyHitPuckToNet() {
@@ -230,8 +257,6 @@ bool MyStrategy::canApproximatelyHitPuckToNet() {
 //
 
 void MyStrategy::act() {
-    _fix.setInvY(_self.getY() > _game.getWorldHeight() / 2);
-
     defend();
 
     if (_world.getPuck().getOwnerHockeyistId() == _self.getId()) {
@@ -282,13 +307,21 @@ void MyStrategy::act() {
             }
 
             if (isNearStick(_world.getPuck())) {
-                if ( (_world.getPuck().getOwnerPlayerId() == _world.getOpponentPlayer().getId()) &&
-                     isOnMyHalf(_world.getPuck()) )
-                {
-                    _move.setAction(STRIKE);
+
+                if (_world.getPuck().getOwnerPlayerId() == _world.getOpponentPlayer().getId()) {
+                    if (isOnMyHalf(_world.getPuck())) {
+                        _move.setAction(STRIKE);
+                    } else {
+                        _move.setAction(TAKE_PUCK);
+                    }
                 } else {
-                    _move.setAction(TAKE_PUCK);
+                    if (isPuckGoingToMyNet()) {
+                        _move.setAction(STRIKE);
+                    } else {
+                        _move.setAction(TAKE_PUCK);
+                    }
                 }
+
             }
         }
 
