@@ -18,7 +18,7 @@ private:
     const double StrikeAnglePrecision = M_PI / 180;
     const double StrikeAngleCorrection = M_PI / 270;
 
-    const double DefenceAreaR = 50;
+    const double DefenceAreaR = 70;
     const double DefenceAreaDist = 190;
 
     const double ApproximateDeadZoneY0 = 15;
