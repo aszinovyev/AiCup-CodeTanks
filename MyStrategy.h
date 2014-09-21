@@ -57,8 +57,6 @@ private:
     bool isNearStick(double x, double y);
     bool isNearStick(const UnitF& u);
 
-    int opponentsAttacking(double x, double y);
-    int opponentsAttacking(const UnitF& u);
     int opponentsAttackingHP(const HockeyistF& h, const PuckF& p);     //Attacking hockeyist with puck
     int opponentsReadyToActHP(const HockeyistF& h, const PuckF& p);     //Attacking hockeyist with puck
 
@@ -69,7 +67,7 @@ private:
     bool isOnMyHalf(const UnitF& u);
 
     bool isPuckGoingToMyNet();
-    bool canApproximatelyHitPuckToNet();
+    bool canApproximatelyHitPuckOpponentsNet();
 
     void act();
 };
