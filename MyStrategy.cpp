@@ -221,7 +221,6 @@ bool MyStrategy::isOnMyHalf(const UnitF& u) {
 //
 
 bool MyStrategy::isPuckGoingToMyNet() {
-    //
 //    const int tick = _world.getTick();
 //    const int t1 = 1030;
 //    const int t2 = 1050;
@@ -231,7 +230,6 @@ bool MyStrategy::isPuckGoingToMyNet() {
 //    if (dbg) {
 //        cout << "isPuckGoingToMyNet() " << tick << endl;
 //    }
-    //
 
     PuckF puck = _world.getPuck();
 
