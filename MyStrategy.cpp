@@ -302,8 +302,6 @@ bool MyStrategy::canApproximatelyHitMyNet() {
 //
 
 void MyStrategy::act() {
-    defend();
-
     if (_world.getPuck().getOwnerHockeyistId() == _self.getId()) {
         if (_attackAreaL0.containsU(_self)) {
             _checkInL0 = true;
@@ -311,22 +309,24 @@ void MyStrategy::act() {
 
         if (_checkInL0) {
             double angle = _self.getAngleTo(_attackDestX, _attackDestY1) - StrikeAngleCorrection;
-            goAngle(angle - StrikeAnglePrecision / 2);
+            goAngle(angle);
 
-            if ((angle > 0) && (angle < StrikeAnglePrecision)) {
+            if (fabs(angle) <= MaxAngleDeviationWhenStriking) {
                 //Can strike
+                _move.setPassAngle(angle);
+                _move.setPassPower(1);
 
                 if ((_world.getPuck().getY() >= _attackDestY0) || !_attackAreaL1.containsU(_self)) {
-                    _move.setAction(STRIKE);        //Last chance to strike
+                    _move.setAction(PASS);        //Last chance to strike
                 } else {
                     if (opponentsReadyToActHP(_self, _world.getPuck()) > 0) {
                         int opps = opponentsAttackingHP(_self, _world.getPuck());
 
                         if (opps >= 2) {
-                            _move.setAction(STRIKE);
+                            _move.setAction(PASS);
                         } else if (opps == 1) {
                             if (!_attackAreaL0.containsU(_self)) {
-                                _move.setAction(STRIKE);
+                                _move.setAction(PASS);
                             }
                         }
                     }

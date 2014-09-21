@@ -15,8 +15,8 @@ public:
     void move(const model::Hockeyist& self, const model::World& world, const model::Game& game, model::Move& move);
 
 private:    
-    const double StrikeAnglePrecision = M_PI / 180;
-    const double StrikeAngleCorrection = M_PI / 270;
+    const double MaxAngleDeviationWhenStriking = M_PI / 180 * 5;
+    const double StrikeAngleCorrection = M_PI / 180 * 0.5;
 
     const double DefenceAreaR = 70;
     const double DefenceAreaDist = 190;
