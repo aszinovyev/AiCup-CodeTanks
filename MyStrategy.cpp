@@ -223,8 +223,8 @@ bool MyStrategy::isOnMyHalf(const UnitF& u) {
 bool MyStrategy::isPuckGoingToMyNet() {
     //
 //    const int tick = _world.getTick();
-//    const int t1 = 5020;
-//    const int t2 = 5040;
+//    const int t1 = 1030;
+//    const int t2 = 1050;
 
 //    const bool dbg = ((tick >= t1) && (tick <= t2));
 
