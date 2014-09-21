@@ -218,7 +218,7 @@ bool MyStrategy::isPuckGoingToMyNet() {
         double insX;
         double insY;
         bool ok = intersection( puck.getX(), puck.getY(), puck.getX() + puck.getSpeedX(), puck.getY() + puck.getSpeedY(),
-                                _world.getMyPlayer().getNetFront(), 0, _world.getMyPlayer().getNetFront(), 1000,
+                                _world.getMyPlayer().getNetFront(), 0, _world.getMyPlayer().getNetFront(), 1,
                                 insX, insY );
 
         if (!ok) {
@@ -247,10 +247,10 @@ bool MyStrategy::isPuckGoingToMyNet() {
     return false;
 }
 
-bool MyStrategy::canApproximatelyHitPuckOpponentsNet() {
+bool MyStrategy::canApproximatelyHitOpponentsNet() {
     PuckF puck = _world.getPuck();
 
-    if ( _attackPuckArea.containsU(_self) && isNearStick(puck) && (fabs(_self.getAngle()) < M_PI_2) ) {
+    if ( _attackPuckArea.containsU(_self) && isNearStick(puck) && (fabs(_self.getAngle()) < M_PI/2) ) {
         double x;
         double y;
         bool ok = intersection(_self.getX(), _self.getY(), puck.getX(), puck.getY(),
@@ -263,6 +263,33 @@ bool MyStrategy::canApproximatelyHitPuckOpponentsNet() {
 
         const double y1 = _world.getOpponentPlayer().getNetBottom() - ApproximateDeadZoneY1;
         const double y2 = _world.getOpponentPlayer().getNetBottom() - ApproximateDeadZoneY0;
+
+        if ( (y >= y1) && (y <= y2) ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool MyStrategy::canApproximatelyHitMyNet() {
+    PuckF puck = _world.getPuck();
+
+    if ( ShapeInvX(_attackPuckArea, _world.getWidth()).containsU(_self) &&
+         isNearStick(puck) && (fabs(_self.getAngle()) > M_PI/2) )
+    {
+        double x;
+        double y;
+        bool ok = intersection(_self.getX(), _self.getY(), puck.getX(), puck.getY(),
+                               _world.getMyPlayer().getNetFront(), 0, _world.getMyPlayer().getNetFront(), 1,
+                               x, y);
+
+        if (!ok) {
+            cout << __FILE__ << " " <<__LINE__ << endl;
+        }
+
+        const double y1 = _world.getMyPlayer().getNetBottom() - ApproximateDeadZoneY1;
+        const double y2 = _world.getMyPlayer().getNetBottom() - ApproximateDeadZoneY0;
 
         if ( (y >= y1) && (y <= y2) ) {
             return true;
@@ -334,19 +361,25 @@ void MyStrategy::act() {
                     }
                 } else {
                     if (isPuckGoingToMyNet()) {
-                        cout << "isPuckGoingToMyNet() " << _world.getTick() << endl;
+                        cout << "isPuckGoingToMyNet() #" <<  _self.getTeammateIndex() + 1 << " " <<
+                                _world.getTick() << endl;
                         _move.setAction(STRIKE);
                     } else {
                         _move.setAction(TAKE_PUCK);
                     }
                 }
 
-                if (canApproximatelyHitPuckOpponentsNet()) {
-                    cout << "canApproximatelyHitPuckToOpponentsNet() #" << _self.getTeammateIndex() + 1 << " "
-                         << _world.getTick() << endl;
+                if (canApproximatelyHitOpponentsNet()) {
+                    cout << "canApproximatelyHitOpponentsNet() #" << _self.getTeammateIndex() + 1 << " " <<
+                            _world.getTick() << endl;
                     _move.setAction(STRIKE);
                 }
 
+                if (canApproximatelyHitMyNet()) {
+                    cout << "canApproximatelyHitMyNet() #" << _self.getTeammateIndex() + 1 << " " <<
+                            _world.getTick() << endl;
+                    _move.setAction(TAKE_PUCK);
+                }
             }
         }
 

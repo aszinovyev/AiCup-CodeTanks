@@ -67,7 +67,8 @@ private:
     bool isOnMyHalf(const UnitF& u);
 
     bool isPuckGoingToMyNet();
-    bool canApproximatelyHitPuckOpponentsNet();
+    bool canApproximatelyHitOpponentsNet();
+    bool canApproximatelyHitMyNet();
 
     void act();
 };
