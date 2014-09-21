@@ -221,6 +221,18 @@ bool MyStrategy::isOnMyHalf(const UnitF& u) {
 //
 
 bool MyStrategy::isPuckGoingToMyNet() {
+    //
+//    const int tick = _world.getTick();
+//    const int t1 = 5020;
+//    const int t2 = 5040;
+
+//    const bool dbg = ((tick >= t1) && (tick <= t2));
+
+//    if (dbg) {
+//        cout << "isPuckGoingToMyNet() " << tick << endl;
+//    }
+    //
+
     PuckF puck = _world.getPuck();
 
     if ( (puck.getSpeedX() < 0) && (Pif(puck.getSpeedX(), puck.getSpeedY()) >= DangerousPuckSpeed) ) {
@@ -238,6 +250,12 @@ bool MyStrategy::isPuckGoingToMyNet() {
 
         double y1 = _world.getMyPlayer().getNetTop() + ApproximateDeadZoneY0;
         double y2 = _world.getMyPlayer().getNetTop() + ApproximateDeadZoneY1;
+
+//        if (dbg) {
+//            cout << insY << endl;
+//            cout << y1 << " " << y2 << endl;
+//            cout << _fix.invcY(y2) << " " << _fix.invcY(y1) << endl << endl;
+//        }
 
         if ( dangArea.containsU(puck) && (insY >= _fix.invcY(y2)) && (insY <= _fix.invcY(y1)) ) {
             return true;
@@ -316,6 +334,7 @@ void MyStrategy::act() {
                     }
                 } else {
                     if (isPuckGoingToMyNet()) {
+                        cout << _world.getTick() << endl;
                         _move.setAction(STRIKE);
                     } else {
                         _move.setAction(TAKE_PUCK);
