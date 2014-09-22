@@ -32,14 +32,14 @@ void MyStrategy::move(const Hockeyist& self, const World& world, const Game& gam
         _attackDestY0 = _world.getOpponentPlayer().getNetTop() + _world.getPuck().getRadius();
         _attackDestY1 = _fix.invcY(_attackDestY0);
 
-        const double a1 = -2.7792;
-        const double a2 = -2.2689;
+        const double a1 = -M_PI / 180 * 150;
+        const double a2 = -M_PI / 180 * 130;
 
-        _attackPuckArea = Sector(_attackDestX, _attackDestY1, 500, a1, a2);
+        _attackingPuckArea = Sector(_attackDestX, _attackDestY1, 500, a1, a2);
         _attackAreaL1.set
-                ( new Sector(_attackPuckArea), new Rectangle(0, _world.getWidth(), _attackDestY0, _world.getHeight()) );
+                ( new Sector(_attackingPuckArea), new Rectangle(0, _world.getWidth(), _attackDestY0, _world.getHeight()) );
         _attackAreaL0.set
-                ( new Sector(_attackPuckArea), new Sector(_attackDestX, _attackDestY1, 385, a1, a2) );
+                ( new Sector(_attackingPuckArea), new Sector(_attackDestX, _attackDestY1, 385, a1, a2) );
 
         assert(_attackAreaL0.contains(AttackAreaDestX, AttackAreaDestY));
         assert(_attackAreaL1.contains(AttackAreaDestX, AttackAreaDestY));
@@ -225,7 +225,7 @@ bool MyStrategy::isPuckGoingToMyNet() {
             cout << __FILE__ << " " <<__LINE__ << endl;
         }
 
-        ShapeInvX dangArea(_attackPuckArea, _world.getWidth());
+        ShapeInvX dangArea(_attackingPuckArea, _world.getWidth());
 
         const double y1 = _world.getMyPlayer().getNetTop() + ApproximateDeadZoneY0;
         const double y2 = _world.getMyPlayer().getNetTop() + ApproximateDeadZoneY1;
@@ -250,7 +250,7 @@ bool MyStrategy::isPuckGoingToMyNet() {
 bool MyStrategy::canApproximatelyHitOpponentsNet() {
     PuckF puck = _world.getPuck();
 
-    if ( _attackPuckArea.containsU(_self) && isNearStick(puck) && (fabs(_self.getAngle()) < M_PI/2) ) {
+    if ( _attackingPuckArea.containsU(_self) && isNearStick(puck) && (fabs(_self.getAngle()) < M_PI/2) ) {
         double x;
         double y;
         bool ok = intersection(_self.getX(), _self.getY(), puck.getX(), puck.getY(),
@@ -275,7 +275,7 @@ bool MyStrategy::canApproximatelyHitOpponentsNet() {
 bool MyStrategy::canApproximatelyHitMyNet() {
     PuckF puck = _world.getPuck();
 
-    if ( ShapeInvX(_attackPuckArea, _world.getWidth()).containsU(_self) &&
+    if ( ShapeInvX(_attackingPuckArea, _world.getWidth()).containsU(_self) &&
          isNearStick(puck) && (fabs(_self.getAngle()) > M_PI/2) )
     {
         double x;
@@ -308,10 +308,13 @@ void MyStrategy::act() {
         }
 
         if (_checkInL0) {
-            double angle = _self.getAngleTo(_attackDestX, _attackDestY1) - StrikeAngleCorrection;
-            goAngle(angle);
+            goAngle(_self.getAngleTo(_attackDestX, _attackDestY1) - StrikeAngleCorrection);
 
-            if (fabs(angle) <= MaxAngleDeviationWhenStriking) {
+            const double angle = atan2(_attackDestY1 - _world.getPuck().getY(), _attackDestX - _world.getPuck().getX()) -
+                                 atan2(_world.getPuck().getY() - _self.getY(), _world.getPuck().getX() - _self.getX()) -
+                                 StrikeAngleCorrection;
+
+            if (fabs(angle) <= _game.getPassSector() / 2) {
                 //Can strike
                 _move.setPassAngle(angle);
                 _move.setPassPower(1);
