@@ -45,7 +45,6 @@ void MyStrategy::move(const Hockeyist& self, const World& world, const Game& gam
         assert(_attackAreaL1.contains(AttackAreaDestX, AttackAreaDestY));
     }
 
-    _fix.setInvY(_self.getY() > _game.getWorldHeight() / 2);
     act();
 }
 
@@ -301,7 +300,43 @@ bool MyStrategy::canApproximatelyHitMyNet() {
 
 //
 
+double MyStrategy::pathSafety(double x1, double y1, double x2, double y2) {
+    vector<HockeyistF> hockeyists = _world.getHockeyists();
+
+    int cnt = 0;
+    double sum = 0;
+
+    for (unsigned int i = 0; i < hockeyists.size(); ++i) {
+        HockeyistF& h = hockeyists[i];
+
+        if (!h.isTeammate() && (h.getType() != GOALIE)) {
+            ++cnt;
+
+            bool inside1 = (scalarMul(x2 - x1, y2 - y1, h.getX() - x1, h.getY() - y1) > 0);
+            bool inside2 = (scalarMul(x1 - x2, y1 - y2, h.getX() - x2, h.getY() - y2) > 0);
+
+            if (!inside1) {
+                sum += Pif2(h.getX() - x1, h.getY() - y1);
+            } else if (!inside2) {
+                sum += Pif2(h.getX() - x2, h.getY() - y2);
+            } else {
+                sum += sqr( height(h.getX(), h.getY(), x1, y1, x2, y2) );
+            }
+        }
+    }
+
+    return sqrt(sum / cnt) / Pif(x1 - x2, y1 - y2);
+}
+
+double MyStrategy::pathSafetyFromSelf(double x, double y) {
+    return pathSafety(_self.getX(), _self.getY(), x, y);
+}
+
+//
+
 void MyStrategy::act() {
+    _fix.setInvY(_self.getY() > _game.getWorldHeight() / 2);
+
     if (_world.getPuck().getOwnerHockeyistId() == _self.getId()) {
         if (_attackAreaL0.containsU(_self)) {
             _checkInL0 = true;
@@ -336,7 +371,14 @@ void MyStrategy::act() {
                 }
             }
         } else {
-            gotoXY(AttackAreaDestX, AttackAreaDestY);
+            double s1 = pathSafetyFromSelf(AttackAreaDestX, AttackAreaDestY);
+            double s2 = pathSafetyFromSelf(AttackAreaDestX, _fix.invcY(AttackAreaDestY));
+
+            if (s1 >= s2) {
+                gotoXY(AttackAreaDestX, AttackAreaDestY);
+            } else {
+                gotoXY(AttackAreaDestX, _fix.invcY(AttackAreaDestY));
+            }
         }
 
         if (!_attackAreaL1.containsU(_self)) {

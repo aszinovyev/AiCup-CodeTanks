@@ -69,6 +69,9 @@ private:
     bool canApproximatelyHitOpponentsNet();
     bool canApproximatelyHitMyNet();
 
+    double pathSafety(double x1, double y1, double x2, double y2);
+    double pathSafetyFromSelf(double x, double y);
+
     void act();
 };
 

@@ -33,6 +33,10 @@ double vectorMul(double x1, double y1, double x2, double y2) {
     return x1 * y2 - x2 * y1;
 }
 
+double scalarMul(double x1, double y1, double x2, double y2) {
+    return x1 * x2 + y1 * y2;
+}
+
 double orientedS(double x1, double y1, double x2, double y2, double x3, double y3) {
     return vectorMul(x2 - x1, y2 - y1, x3 - x1, y3 - y1);
 }
@@ -57,4 +61,16 @@ bool intersection(double x1, double y1, double x2, double y2, double x3, double 
     x = (b1*c2 - b2*c1) / d;
     y = (a2*c1 - a1*c2) / d;
     return true;
+}
+
+double height(double x, double y, double x1, double y1, double x2, double y2) {
+    const double a = y1 - y2;
+    const double b = x2 - x1;
+    const double c = x1*y2 - x2*y1;
+
+    return fabs(a*x + b*y + c) / Pif(a, b);
+}
+
+double sqr(double a) {
+    return a * a;
 }
