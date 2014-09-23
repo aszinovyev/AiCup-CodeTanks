@@ -316,16 +316,16 @@ double MyStrategy::pathSafety(double x1, double y1, double x2, double y2) {
             bool inside2 = (scalarMul(x1 - x2, y1 - y2, h.getX() - x2, h.getY() - y2) > 0);
 
             if (!inside1) {
-                sum += Pif2(h.getX() - x1, h.getY() - y1);
+                sum += sqrt( Pif(h.getX() - x1, h.getY() - y1) );
             } else if (!inside2) {
-                sum += Pif2(h.getX() - x2, h.getY() - y2);
+                sum += sqrt( Pif(h.getX() - x2, h.getY() - y2) );
             } else {
-                sum += sqr( height(h.getX(), h.getY(), x1, y1, x2, y2) );
+                sum += sqrt( height(h.getX(), h.getY(), x1, y1, x2, y2) );
             }
         }
     }
 
-    return sqrt(sum / cnt) / Pif(x1 - x2, y1 - y2);
+    return sqr(sum / cnt) / Pif(x1 - x2, y1 - y2);
 }
 
 double MyStrategy::pathSafetyFromSelf(double x, double y) {
