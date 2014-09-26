@@ -24,16 +24,19 @@ private:
     const double ApproximateDeadZoneY1 = 65;
     const double DangerousPuckSpeed = 13;
 
-    const double AttackAreaDestX = 775;
-    const double AttackAreaDestY = 300;
+    const double StrikeAreaAngle = -M_PI / 180 * 130;
+
+    const double StrikeMinSpeedY = 10.5;
+
+    double _attackAreaDestX;
+    double _attackAreaDestY;
 
     double _attackDestX;
     double _attackDestY0;
     double _attackDestY1;
 
-    Sector _attackingPuckArea;
-    ShapeSubtraction _attackAreaL0;
-    ShapeSubtraction _attackAreaL1;
+    ShapeCommon _attackingPuckArea;
+    Circle _attackArea;
 
     bool _first;
     CoordFix _fix;
@@ -42,8 +45,6 @@ private:
     WorldF _world;
     GameF _game;
     MoveF _move;
-
-    bool _checkInL0;
 
     double conv0(double x, double z);
     double conv1(double x, double z);

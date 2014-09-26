@@ -113,6 +113,31 @@ bool ShapeSubtraction::contains(double x, double y) const {
     return (_s1->contains(x, y) && !_s2->contains(x, y));
 }
 
+ShapeCommon::ShapeCommon() {
+    _s1 = 0;
+    _s2 = 0;
+}
+
+ShapeCommon::~ShapeCommon() {
+    delete _s1;
+    delete _s2;
+
+    _s1 = 0;
+    _s2 = 0;
+}
+
+void ShapeCommon::set(Shape *s1, Shape *s2) {
+    delete _s1;
+    delete _s2;
+
+    _s1 = s1;
+    _s2 = s2;
+}
+
+bool ShapeCommon::contains(double x, double y) const {
+    return (_s1->contains(x, y) && _s2->contains(x, y));
+}
+
 //
 
 ShapeInvX::ShapeInvX(const Shape& s, const double width) : _s(s), _width(width) {

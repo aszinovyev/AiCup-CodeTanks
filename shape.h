@@ -98,6 +98,28 @@ private:
     Shape* _s2;
 };
 
+class ShapeCommon : public Shape {
+public:
+    ShapeCommon();
+    virtual ~ShapeCommon();
+
+    void set(Shape* s1, Shape* s2);
+
+    virtual bool contains(double x, double y) const;
+
+private:
+    ShapeCommon(const ShapeCommon& s) {
+        (void)s;
+    }
+    ShapeCommon& operator=(const ShapeCommon& s) {
+        (void)s;
+        return *this;
+    }
+
+    Shape* _s1;
+    Shape* _s2;
+};
+
 //
 
 class ShapeInvX : public Shape {

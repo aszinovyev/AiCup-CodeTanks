@@ -8,7 +8,6 @@ using namespace std;
 
 MyStrategy::MyStrategy() {
     _first = true;
-    _checkInL0 = false;
 }
 
 void MyStrategy::move(const Hockeyist& self, const World& world, const Game& game, Move& move) {
@@ -32,17 +31,18 @@ void MyStrategy::move(const Hockeyist& self, const World& world, const Game& gam
         _attackDestY0 = _world.getOpponentPlayer().getNetTop() + _world.getPuck().getRadius();
         _attackDestY1 = _fix.invcY(_attackDestY0);
 
-        const double a1 = -M_PI / 180 * 150;
-        const double a2 = -M_PI / 180 * 130;
+        const double limit = _world.getOpponentPlayer().getNetTop() + _self.getRadius();
+        _attackingPuckArea.set( new Sector(_attackDestX, _attackDestY1, Inf, -M_PI, StrikeAreaAngle),
+                                new Rectangle(0, _world.getWidth(), 0, limit) );
 
-        _attackingPuckArea = Sector(_attackDestX, _attackDestY1, 500, a1, a2);
-        _attackAreaL1.set
-                ( new Sector(_attackingPuckArea), new Rectangle(0, _world.getWidth(), _attackDestY0, _world.getHeight()) );
-        _attackAreaL0.set
-                ( new Sector(_attackingPuckArea), new Sector(_attackDestX, _attackDestY1, 385, a1, a2) );
+        const double attackAreaR = 50;
 
-        assert(_attackAreaL0.contains(AttackAreaDestX, AttackAreaDestY));
-        assert(_attackAreaL1.contains(AttackAreaDestX, AttackAreaDestY));
+        _attackAreaDestY = limit - attackAreaR;
+        _attackAreaDestX = _attackDestX - (_attackDestY1 - _attackAreaDestY) * tan(-StrikeAreaAngle - M_PI/2) - attackAreaR - _game.getStickLength();
+
+        _attackArea = Circle(_attackAreaDestX, _attackAreaDestY, attackAreaR);
+
+        assert(_attackingPuckArea.contains(_attackAreaDestX, _attackAreaDestY));
     }
 
     act();
@@ -338,55 +338,41 @@ void MyStrategy::act() {
     _fix.setInvY(_self.getY() > _game.getWorldHeight() / 2);
 
     if (_world.getPuck().getOwnerHockeyistId() == _self.getId()) {
-        if (_attackAreaL0.containsU(_self)) {
-            _checkInL0 = true;
-        }
+        const double angle = atan2(_attackDestY1 - _world.getPuck().getY(), _attackDestX - _world.getPuck().getX()) -
+                             atan2(_world.getPuck().getY() - _self.getY(), _world.getPuck().getX() - _self.getX()) -
+                             StrikeAngleCorrection;
 
-        if (_checkInL0) {
-            goAngle(_self.getAngleTo(_attackDestX, _attackDestY1) - StrikeAngleCorrection);
-
-            const double angle = atan2(_attackDestY1 - _world.getPuck().getY(), _attackDestX - _world.getPuck().getX()) -
-                                 atan2(_world.getPuck().getY() - _self.getY(), _world.getPuck().getX() - _self.getX()) -
-                                 StrikeAngleCorrection;
-
-            if (fabs(angle) <= _game.getPassSector() / 2) {
-                //Can strike
-                _move.setPassAngle(angle);
-                _move.setPassPower(1);
-
-                if ((_world.getPuck().getY() >= _attackDestY0) || !_attackAreaL1.containsU(_self)) {
-                    _move.setAction(PASS);        //Last chance to strike
-                } else {
-                    if (opponentsReadyToActHP(_self, _world.getPuck()) > 0) {
-                        int opps = opponentsAttackingHP(_self, _world.getPuck());
-
-                        if (opps >= 2) {
-                            _move.setAction(PASS);
-                        } else if (opps == 1) {
-                            if (!_attackAreaL0.containsU(_self)) {
-                                _move.setAction(PASS);
-                            }
-                        }
-                    }
-                }
-            }
+        if (_attackArea.containsU(_self)) {
+            //_move.setTurn(-_self.getAngle());
+            //gotoXY(_attackDestX + _attackArea.getR(), _attackDestY1);
+            goAngle(-_self.getAngle());
         } else {
-            double s1 = pathSafetyFromSelf(AttackAreaDestX, AttackAreaDestY);
-            double s2 = pathSafetyFromSelf(AttackAreaDestX, _fix.invcY(AttackAreaDestY));
+            double s1 = pathSafetyFromSelf(_attackAreaDestX, _attackAreaDestY);
+            double s2 = pathSafetyFromSelf(_attackAreaDestX, _fix.invcY(_attackAreaDestY));
 
             if (s1 >= s2) {
-                gotoXY(AttackAreaDestX, AttackAreaDestY);
+                gotoXY(_attackAreaDestX, _attackAreaDestY);
             } else {
-                gotoXY(AttackAreaDestX, _fix.invcY(AttackAreaDestY));
+                gotoXY(_attackAreaDestX, _fix.invcY(_attackAreaDestY));
             }
         }
 
-        if (!_attackAreaL1.containsU(_self)) {
-            _checkInL0 = false;
+        if (fabs(angle) <= _game.getPassSector() / 2) {
+            //Can strike
+            _move.setPassAngle(angle);
+            _move.setPassPower(1);
+
+            const double speed = 15 + Pif(_self.getSpeedX(), _self.getSpeedY()) *
+                                      cos( _self.getAngle() + angle - atan2(_self.getSpeedY(), _self.getSpeedX()) );
+
+            const double speedY = speed * sin(_self.getAngle() + angle);
+            cout << speed << " " << (_self.getAngle() + angle) / M_PI * 180 << " " << speedY << endl;
+
+            if (speedY >= StrikeMinSpeedY) {
+                _move.setAction(PASS);
+            }
         }
     } else {
-        _checkInL0 = false;
-
         if (_world.getPuck().getOwnerPlayerId() == _self.getPlayerId()) {
             defend();
         } else {
