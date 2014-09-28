@@ -62,7 +62,7 @@ void MyStrategy::move(const Hockeyist& self, const World& world, const Game& gam
 
         //
 
-        _dangerousPuckArea = Sector(_world.getMyPlayer().getNetFront(), _attackDestY1, Inf, -M_PI, DangerousPuckAreaAngle);
+        _dangerousPuckArea = Sector(_world.getMyPlayer().getNetFront(), _attackDestY1, Inf, DangerousPuckAreaAngle, 0);
     }
 
     act();
@@ -248,8 +248,8 @@ bool MyStrategy::isOnMyHalf(const UnitF& u) {
 
 bool MyStrategy::isPuckGoingToMyNet() {
 //    const int tick = _world.getTick();
-//    const int t1 = 1030;
-//    const int t2 = 1050;
+//    const int t1 = 2100;
+//    const int t2 = 2200;
 
 //    const bool dbg = ((tick >= t1) && (tick <= t2));
 
@@ -259,7 +259,7 @@ bool MyStrategy::isPuckGoingToMyNet() {
 
     PuckF puck = _world.getPuck();
 
-    if ( (puck.getSpeedX() < 0) && (puck.getSpeedY() >= DangerousPuckSpeedY) ) {
+    if (puck.getSpeedX() < 0) {
         double insX;
         double insY;
         bool ok = intersection( puck.getX(), puck.getY(), puck.getX() + puck.getSpeedX(), puck.getY() + puck.getSpeedY(),
@@ -276,13 +276,17 @@ bool MyStrategy::isPuckGoingToMyNet() {
 //        if (dbg) {
 //            cout << insY << endl;
 //            cout << y1 << " " << y2 << endl;
-//            cout << _fix.invcY(y2) << " " << _fix.invcY(y1) << endl << endl;
+//            cout << _fix.invcY(y2) << " " << _fix.invcY(y1) << endl;
+//            cout << puck.getSpeedY() << endl;
+//            cout << endl;
 //        }
 
-        if ( _dangerousPuckArea.containsU(puck) && (insY >= _fix.invcY(y2)) && (insY <= _fix.invcY(y1)) ) {
+        if ( _dangerousPuckArea.containsU(puck) && (insY >= _fix.invcY(y2)) && (insY <= _fix.invcY(y1)) &&
+             (puck.getSpeedY() >= DangerousPuckSpeedY) ) {
             return true;
         }
-        if ( ShapeInvY(_dangerousPuckArea, _world.getHeight()).containsU(puck) && (insY >= y1) && (insY <= y2) ) {
+        if ( ShapeInvY(_dangerousPuckArea, _world.getHeight()).containsU(puck) && (insY >= y1) && (insY <= y2) &&
+             (-puck.getSpeedY() >= DangerousPuckSpeedY) ) {
             return true;
         }
     }
@@ -459,7 +463,7 @@ void MyStrategy::act() {
                                       cos( _self.getAngle() + angle - atan2(_self.getSpeedY(), _self.getSpeedX()) );
 
             const double speedY = speed * sin(_self.getAngle() + angle);
-            cout << speed << " " << (_self.getAngle() + angle) / M_PI * 180 << " " << speedY << endl;
+            //cout << speed << " " << (_self.getAngle() + angle) / M_PI * 180 << " " << speedY << endl;
 
             if (speedY >= StrikeMinSpeedY) {
                 //Can strike

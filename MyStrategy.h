@@ -28,9 +28,9 @@ private:
     const double StrikeMinSpeedY = 10.6;
 
     const double ApproximateDeadZoneY0 = 0;
-    const double ApproximateDeadZoneY1 = 65;
+    const double ApproximateDeadZoneY1 = 80;
     const double DangerousPuckSpeedY = 9.5;
-    const double DangerousPuckAreaAngle = -M_PI / 180 * 125;
+    const double DangerousPuckAreaAngle = -M_PI / 180 * 55;
 
     double _attackDestX;
     double _attackDestY0;
