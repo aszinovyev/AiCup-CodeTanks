@@ -15,28 +15,34 @@ public:
     void move(const model::Hockeyist& self, const model::World& world, const model::Game& game, model::Move& move);
 
 private:    
-    const double StrikeAngleCorrection = M_PI / 180 * 0.5;
+    const double ExcessK = 1.2;
+
+    const double StrikeAngleCorrection = M_PI / 180 * 0.45;
 
     const double DefenceAreaR = 70;
     const double DefenceAreaDist = 190;
 
+    const double AttackingPuckAreaAngle = -M_PI / 180 * 135;
+    const double AttackAreaL0Width = 100;
+
+    const double StrikeMinSpeedY = 10.6;
+
     const double ApproximateDeadZoneY0 = 0;
     const double ApproximateDeadZoneY1 = 65;
-    const double DangerousPuckSpeed = 13;
-
-    const double StrikeAreaAngle = -M_PI / 180 * 130;
-
-    const double StrikeMinSpeedY = 10.5;
-
-    double _attackAreaDestX;
-    double _attackAreaDestY;
+    const double DangerousPuckSpeedY = 9.5;
+    const double DangerousPuckAreaAngle = -M_PI / 180 * 125;
 
     double _attackDestX;
     double _attackDestY0;
     double _attackDestY1;
 
-    ShapeCommon _attackingPuckArea;
-    Circle _attackArea;
+    Sector _attackingPuckArea;
+    ShapeCommon _attackAreaL0;
+    ShapeCommon _attackAreaL1;
+
+    Sector _dangerousPuckArea;
+
+    bool _checkInL1;
 
     bool _first;
     CoordFix _fix;
@@ -57,8 +63,11 @@ private:
     bool isNearStick(double x, double y);
     bool isNearStick(const UnitF& u);
 
-    int opponentsAttackingHP(const HockeyistF& h, const PuckF& p);     //Attacking hockeyist with puck
-    int opponentsReadyToActHP(const HockeyistF& h, const PuckF& p);     //Attacking hockeyist with puck
+    double distNextTick(UnitF u1, UnitF u2);
+    bool isNearStickNextTick(const HockeyistF& h, const UnitF& u);
+
+    int opponentsAttackingHP();     //Attacking hockeyist with puck
+    //int opponentsReadyToActHP(const HockeyistF& h, const PuckF& p);     //Attacking hockeyist with puck
 
     void defend();
     int nearestToPuck();
@@ -72,6 +81,8 @@ private:
 
     double pathSafety(double x1, double y1, double x2, double y2);
     double pathSafetyFromSelf(double x, double y);
+
+    void gotoL0();
 
     void act();
 };

@@ -48,6 +48,7 @@ private:
 
 class Polygon : public Shape {
 public:
+    Polygon() {}
     Polygon(vector<double> x, vector<double> y);
 
     virtual bool contains(double x, double y) const;
